@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>رفع صوتية جديدة</title>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 50px; background-color: #f4f6f0;">
+  <h2>رفع ملف صوتي جديد للموقع</h2>
+  <form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="audioFile" accept="audio/*" required><br><br>
+    <input type="password" name="password" placeholder="كلمة السر للإضافة" required style="padding: 8px;"><br><br>
+    <button type="submit" style="padding: 10px 20px; background: #005a43; color: white; border: none; border-radius: 5px; cursor: pointer;">رفع الآن</button>
+  </form>
+</body>
+</html>
+

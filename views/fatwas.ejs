@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>الفتاوى</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f4f6f0; padding: 20px; direction: rtl; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    input, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; box-sizing: border-box; }
+    button { background: #005a43; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    .fatwa { background: #eef5f2; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    .delete-btn { background: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>قسم الفتاوى</h2>
+    <a href="/">← العودة للرئيسية</a>
+    <hr>
+    <h3>إضافة فتوى جديدة</h3>
+    <form action="/add-fatwa" method="POST">
+      <input type="text" name="question" placeholder="السؤال" required>
+      <textarea name="answer" rows="3" placeholder="الإجابة / نص الفتوى..." required></textarea>
+      <button type="submit">نشر الفتوى</button>
+    </form>
+    <hr>
+    <h3>الفتاوى المتاحة:</h3>
+    <% if(typeof fatwas !== 'undefined' && fatwas.length > 0) { %>
+      <% fatwas.forEach(f => { %>
+        <div class="fatwa">
+          <p><strong>س: <%= f.question %></strong></p>
+          <p>ج: <%= f.answer %></p>
+          <form action="/delete-fatwa" method="POST">
+            <input type="hidden" name="id" value="<%= f.id %>">
+            <button type="submit" class="delete-btn" onclick="return confirm('هل تريد حذف هذه الفتوى؟')">🗑️ حذف الفتوى</button>
+          </form>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>لا توجد فتاوى بعد.</p>
+    <% } %>
+  </div>
+</body>
+</html>
+

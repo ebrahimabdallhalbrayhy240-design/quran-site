@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>الكتب والرسائل</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f4f6f0; padding: 20px; direction: rtl; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    input { width: 100%; padding: 10px; margin: 5px 0 15px; box-sizing: border-box; }
+    button { background: #005a43; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    .book-item { background: #f9f9f9; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+    .delete-btn { background: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+    a.btn-download { background: #c29b38; color: white; text-decoration: none; padding: 5px 10px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>قسم الكتب والرسائل</h2>
+    <a href="/">← العودة للرئيسية</a>
+    <hr>
+    <h3>إضافة كتاب أو رسالة (PDF)</h3>
+    <form action="/add-book" method="POST" enctype="multipart/form-data">
+      <input type="file" name="bookFile" accept=".pdf,.doc,.docx" required>
+      <input type="password" name="password" placeholder="كلمة السر للإضافة" required>
+      <button type="submit">رفع الكتاب</button>
+    </form>
+    <hr>
+    <h3>الكتب المتاحة:</h3>
+    <% if(books.length === 0) { %><p>لا توجد كتب مرفوعة بعد.</p><% } %>
+    <% books.forEach(book => { %>
+      <div class="book-item">
+        <span>📖 <%= book %></span>
+        <div>
+          <a href="/books_files/<%= book %>" target="_blank" class="btn-download">قراءة / تحميل</a>
+          <form action="/delete-book" method="POST" style="display:inline;">
+            <input type="hidden" name="fileName" value="<%= book %>">
+            <input type="password" name="password" placeholder="كلمة السر" style="width: 80px; padding: 3px;" required>
+            <button type="submit" class="delete-btn">حذف</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>
+
