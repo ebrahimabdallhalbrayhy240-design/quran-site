@@ -1,27 +1,23 @@
 const express = require('express');
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
-    <html lang="ar" dir="rtl">
+    <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>تطبيق القرآن الكريم</title>
+        <title>Quran App</title>
         <style>
-            body { font-family: Tahoma, sans-serif; background: #f4f6f9; text-align: center; padding: 50px; }
-            h1 { color: #1b5e20; }
-            .box { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: inline-block; }
+            body { font-family: Arial, sans-serif; background: #e8f5e9; text-align: center; padding: 60px; }
+            .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: inline-block; }
+            h1 { color: #2e7d32; }
         </style>
     </head>
     <body>
-        <div class="box">
-            <h1>تم تشغيل موقع القرآن الكريم بنجاح!</h1>
-            <p>الموقع يعمل الآن بشكل سليم ومستقر على Vercel.</p>
+        <div class="card">
+            <h1>Quran Website is Online Successfully!</h1>
+            <p>Vercel deployment and Express server are working perfectly.</p>
         </div>
     </body>
     </html>
