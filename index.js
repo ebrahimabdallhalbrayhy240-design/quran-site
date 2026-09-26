@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require('multer');
 const path = require('path');
 
 const app = express();
@@ -14,8 +13,6 @@ let db = {
     articles: [],
     fatwas: []
 };
-
-const upload = multer({ storage: multer.memoryStorage() });
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,10 +37,9 @@ app.get('/books', (req, res) => {
     res.render('books', { books: db.books });
 });
 
-app.post('/books', upload.single('bookFile'), checkAdmin, (req, res) => {
+app.post('/books', checkAdmin, (req, res) => {
     const { title } = req.body;
-    const fileName = req.file ? req.file.originalname : 'ملف مرفق';
-    db.books.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA'), fileName });
+    db.books.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
@@ -51,10 +47,9 @@ app.get('/audio', (req, res) => {
     res.render('audio', { audios: db.audios });
 });
 
-app.post('/audio', upload.single('audioFile'), checkAdmin, (req, res) => {
+app.post('/audio', checkAdmin, (req, res) => {
     const { title } = req.body;
-    const fileName = req.file ? req.file.originalname : 'مقطع صوتي';
-    db.audios.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA'), fileName });
+    db.audios.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
@@ -78,11 +73,6 @@ app.post('/fatwas', checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-// التشغيل محلياً فقط، والتصدير لـ Vercel
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
-}
-
-module.exports = app;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
