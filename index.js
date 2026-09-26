@@ -9,12 +9,18 @@ const PORT = process.env.PORT || 3000;
 
 const ADMIN_PASSWORD = 'admin123';
 
+// التأكد من وجود مجلد الرفع
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+    try {
+        fs.mkdirSync(uploadDir, { recursive: true });
+    } catch (e) {
+        console.log('Could not create upload dir:', e);
+    }
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadDir = 'public/uploads';
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
@@ -28,19 +34,29 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
+// مسارات ملفات JSON مؤقتة أو آمنة
+const getDbPath = (filename) => path.join(__dirname, filename);
+
 const getData = (file) => {
-    if (!fs.existsSync(file)) return [];
+    const filePath = getDbPath(file);
+    if (!fs.existsSync(filePath)) return [];
     try {
-        return JSON.parse(fs.readFileSync(file, 'utf8'));
+        return JSON.parse(fs.readFileSync(filePath, 'utf8'));
     } catch (e) {
         return [];
     }
 };
 
 const saveData = (file, data) => {
-    fs.writeFileSync(file, JSON.stringify(data, null, 2));
+    const filePath = getDbPath(file);
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    } catch (e) {
+        console.log('Error saving data:', e);
+    }
 };
 
+// وسيط التحقق من المشرف بدقة
 const checkAdmin = (req, res, next) => {
     const pass = req.headers['x-admin-pass'] || req.body.adminPass;
     if (pass === ADMIN_PASSWORD) {
