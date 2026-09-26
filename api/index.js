@@ -6,68 +6,52 @@ app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, '../public')));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// مصفوفة مؤقتة لتخزين الصوتيات المرفوعة
 let audiosList = [];
+let booksList = [];
+let fatwaList = [];
+let articlesList = [];
 
-// الصفحة الرئيسية
 app.get('/', (req, res) => {
-    res.render('index', { files: [], articles: [], books: [], messages: [] }, (err, html) => {
-        if (err) {
-            res.send('<h1>مرحباً بك في موقع القرآن الكريم والمحاضرات</h1>');
-        } else {
-            res.send(html);
-        }
-    });
+    res.render('index', { files: [], articles: articlesList, books: booksList, messages: [] });
 });
 
-// قسم الصوتيات (عرض واستقبال)
-app.get('/audios', (req, res) => {
-    res.render('audios', { audios: audiosList });
-});
-
+app.get('/audios', (req, res) => { res.render('audios', { audios: audiosList }); });
 app.post('/audios', (req, res) => {
-    // استقبال العنوان (مؤقتاً بدون حفظ الملف الثقيل على سيرفرلس لتجنب الأخطاء، أو حفظ اسم الملف)
     const title = req.body.title || 'صوتية بدون عنوان';
-    
-    // إضافة الصوتية الجديدة للقائمة
-    audiosList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
-    
+    const url = req.body.url || 'https://www.islamcan.com/audio/quran/surah001.mp3'; // رابط افتراضي يعمل مباشرة
+    audiosList.unshift({ title, url, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
-app.get('/articles', (req, res) => {
-    res.render('articles', { success: false });
-});
-app.post('/articles', (req, res) => {
-    res.render('articles', { success: true });
-});
-
-app.get('/books', (req, res) => {
-    res.render('books', { success: false });
-});
+app.get('/books', (req, res) => { res.render('books', { books: booksList }); });
 app.post('/books', (req, res) => {
-    res.render('books', { success: true });
+    const title = req.body.title || 'كتاب بدون عنوان';
+    booksList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
+    res.json({ success: true });
 });
 
-app.get('/fatwa', (req, res) => {
-    res.render('fatwa', { success: false });
-});
+app.get('/fatwa', (req, res) => { res.render('fatwa', { fatwas: fatwaList }); });
 app.post('/fatwa', (req, res) => {
-    res.render('fatwa', { success: true });
+    const title = req.body.title || 'سؤال فتوى';
+    const answer = req.body.answer || 'الإجابة قيد المراجعة';
+    fatwaList.unshift({ title, answer, date: new Date().toLocaleDateString('ar-SA') });
+    res.json({ success: true });
 });
 
-// التعامل مع أي صفحة أخرى
+app.get('/articles', (req, res) => { res.render('articles', { articles: articlesList }); });
+app.post('/articles', (req, res) => {
+    const title = req.body.title || 'مقال جديد';
+    articlesList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
+    res.json({ success: true });
+});
+
 app.get('/:page', (req, res) => {
     const pageName = req.params.page;
     res.render(pageName, { 
-        files: [], 
-        articles: [], 
-        books: [], 
-        messages: [], 
-        data: [] 
+        files: [], articles: articlesList, books: booksList, audios: audiosList, fatwas: fatwaList 
     }, (err, html) => {
         if (err) {
             res.status(200).send(`

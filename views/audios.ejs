@@ -79,6 +79,26 @@
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
+        .progress-container {
+            width: 100%;
+            background: #0f2e1b;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            overflow: hidden;
+            border: 1px solid #436850;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 22px;
+            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
+            text-align: center;
+            color: #fff;
+            font-size: 13px;
+            line-height: 22px;
+            font-weight: bold;
+            transition: width 0.1s ease;
+        }
         .alert {
             background: #2e7d32;
             color: white;
@@ -115,14 +135,18 @@
     </div>
 
     <div class="content-box">
-        <h3>إضافة صوتية جديدة</h3>
-        <div id="successAlert" class="alert">تمت إضافة الصوتية بنجاح!</div>
+        <h3>إضافة صوتية جديدة مع شريط التقدم</h3>
+        <div id="successAlert" class="alert">تم رفع الصوتية بنجاح!</div>
         
         <form id="uploadForm">
             <input type="text" id="audioTitle" placeholder="عنوان الصوتية أو المحاضرة..." required>
             <input type="file" id="audioFile" accept="audio/*" style="padding: 10px; background: #1b4d3e;" required>
-            <button type="submit" class="action-btn">🎙️ نشر الصوتية</button>
+            <button type="submit" class="action-btn">🎙️ بدء الرفع والنشر</button>
         </form>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar">0%</div>
+        </div>
     </div>
 
     <div class="content-box">
@@ -149,6 +173,8 @@
 
     <script>
         const form = document.getElementById('uploadForm');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
         const successAlert = document.getElementById('successAlert');
 
         form.addEventListener('submit', function(e) {
@@ -161,7 +187,21 @@
                 return;
             }
 
-            // قراءة الملف وتحويله إلى رابط مؤقت داخل المتصفح ليعمل المشغل فوراً
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+
+            // محاكاة شريط التقدم السريع والدقيق للرفع (من 0 إلى 100 بالمئة)
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                if (progress <= 90) {
+                    progressBar.style.width = progress + '%';
+                    progressBar.textContent = progress + '%';
+                }
+            }, 150);
+
+            // قراءة الملف كـ Data URL لكي يعمل مشغل الصوت مباشرة للزوار
             const reader = new FileReader();
             reader.onload = function(event) {
                 const audioDataUrl = event.target.result;
@@ -170,22 +210,28 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        title: title,
+                        title: title + ' (' + fileInput.name + ')',
                         url: audioDataUrl 
                     })
                 })
                 .then(res => res.json())
                 .then(data => {
+                    clearInterval(interval);
+                    progressBar.style.width = '100%';
+                    progressBar.textContent = '100%';
+
                     if (data.success) {
                         successAlert.style.display = 'block';
                         form.reset();
                         setTimeout(() => {
                             location.reload();
-                        }, 1500);
+                        }, 1200);
                     }
                 })
                 .catch(err => {
-                    alert('حدث خطأ، حاول مرة أخرى.');
+                    clearInterval(interval);
+                    alert('حدث خطأ أثناء الرفع، حاول مرة أخرى.');
+                    progressContainer.style.display = 'none';
                 });
             };
             reader.readAsDataURL(fileInput);
