@@ -23,7 +23,7 @@
             border-radius: 16px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); border: 1px solid #436850; margin-bottom: 20px;
         }
         .content-box h3 { font-family: 'Amiri', serif; color: #fbfada; font-size: 22px; margin-top: 0; }
-        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #436850; background: #0f2e1b; color: #fff; box-sizing: border-box; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #436850; background: #0f2e1b; color: #fff; box-sizing: border-box; }
         input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #436850; background: #1b4d3e; color: #fbfada; box-sizing: border-box; cursor: pointer; }
         .action-btn { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #fff; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .progress-container { width: 100%; background: #0f2e1b; border-radius: 10px; margin-top: 15px; display: none; overflow: hidden; border: 1px solid #436850; }
@@ -32,17 +32,19 @@
         .item-card { background: #1b4d3e; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #436850; }
         .btn-group { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
         .custom-btn { display: inline-block; background: #2c5e4a; color: #fbfada; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; border: 1px solid #adbc9f; font-weight: bold; }
+        .admin-login-section { text-align: center; margin-top: 30px; padding: 15px; border-top: 1px dashed #436850; }
+        .admin-trigger { background: none; border: none; color: #adbc9f; cursor: pointer; font-size: 13px; text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="header-box">
         <h1>الكتب والرسائل</h1>
-        <a href="/?key=ibrahim123" class="back-link">← العودة للرئيسية</a>
+        <a href="/" class="back-link">← العودة للرئيسية</a>
     </div>
 
-    <% if (locals.isAdmin) { %>
-    <div class="content-box">
-        <h3>إضافة كتاب أو رسالة جديدة (لوحة التحكم الخاصة بك)</h3>
+    <!-- صندوق الرفع المخفي، لا يظهر إلا بعد إدخال كلمة المرور الصحيحة -->
+    <div class="content-box" id="uploadBox" style="display: none;">
+        <h3>إضافة كتاب أو رسالة جديدة (لوحة التحكم)</h3>
         <div id="successAlert" class="alert">تمت إضافة الكتاب بنجاح!</div>
         <form id="uploadForm">
             <input type="text" id="bookTitle" placeholder="عنوان الكتاب أو الرسالة..." required>
@@ -53,7 +55,6 @@
             <div class="progress-bar" id="progressBar">0%</div>
         </div>
     </div>
-    <% } %>
 
     <div class="content-box">
         <h3>الكتب والرسائل المنشورة</h3>
@@ -77,8 +78,24 @@
         </div>
     </div>
 
-    <% if (locals.isAdmin) { %>
+    <!-- زر دخول المشرف الخفي في الأسفل -->
+    <div class="admin-login-section">
+        <button class="admin-trigger" onclick="unlockAdmin()">🔒 تسجيل دخول المشرف للرفع</button>
+    </div>
+
     <script>
+        let adminPassword = '';
+
+        function unlockAdmin() {
+            const pass = prompt('الرجاء إدخال كلمة مرور المشرف:');
+            if (pass) {
+                // نختبر كلمة المرور بإرسالها أو حفظها مؤقتاً
+                adminPassword = pass;
+                document.getElementById('uploadBox').style.display = 'block';
+                alert('تم تفعيل وضع المشرف بنجاح! يمكنك الآن رفع الكتب.');
+            }
+        }
+
         const form = document.getElementById('uploadForm');
         const progressBar = document.getElementById('progressBar');
         const progressContainer = document.getElementById('progressContainer');
@@ -99,9 +116,12 @@
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                fetch('/books?key=ibrahim123', {
+                fetch('/books', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-admin-pass': adminPassword
+                    },
                     body: JSON.stringify({ title: title, url: event.target.result })
                 })
                 .then(res => res.json())
@@ -113,13 +133,18 @@
                         form.reset();
                         setTimeout(() => location.reload(), 1000);
                     } else {
-                        alert(data.message || 'خطأ في الصلاحيات');
+                        alert(data.message || 'كلمة المرور خاطئة!');
+                        progressContainer.style.display = 'none';
                     }
+                })
+                .catch(err => {
+                    clearInterval(interval);
+                    alert('حدث خطأ أثناء الرفع.');
+                    progressContainer.style.display = 'none';
                 });
             };
             reader.readAsDataURL(fileInput);
         });
     </script>
-    <% } %>
 </body>
 </html>

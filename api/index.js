@@ -14,39 +14,27 @@ let booksList = [];
 let fatwaList = [];
 let articlesList = [];
 
-// المفتاح السري الخاص بك (يمكنك تغليقه بالرمز الذي تريده)
-const ADMIN_KEY = 'ibrahim123';
+// كلمة المرور السرية الخاصة بك للرفع
+const ADMIN_PASS = '1234';
 
-// دالة وسيطة للتحقق من أن المستخدم هو المشرف
+// التحقق من كلمة المرور عبر الطلب
 function checkAdmin(req, res, next) {
-    const key = req.query.key || req.body.key;
-    if (key === ADMIN_KEY) {
+    const password = req.body.password || req.headers['x-admin-pass'];
+    if (password === ADMIN_PASS) {
         next();
     } else {
-        res.status(403).json({ success: false, message: 'غير مصرح لك بالرفع أو التعديل' });
+        res.status(403).json({ success: false, message: 'كلمة المرور غير صحيحة' });
     }
 }
 
 app.get('/', (req, res) => {
-    const isAdmin = req.query.key === ADMIN_KEY;
-    res.render('index', { files: [], articles: articlesList, books: booksList, messages: [], isAdmin });
-});
-
-app.get('/audios', (req, res) => { 
-    const isAdmin = req.query.key === ADMIN_KEY;
-    res.render('audios', { audios: audiosList, isAdmin, adminKey: ADMIN_KEY }); 
-});
-app.post('/audios', checkAdmin, (req, res) => {
-    const title = req.body.title || 'صوتية بدون عنوان';
-    const url = req.body.url;
-    audiosList.unshift({ title, url, date: new Date().toLocaleDateString('ar-SA') });
-    res.json({ success: true });
+    res.render('index', { files: [], articles: articlesList, books: booksList, messages: [] });
 });
 
 app.get('/books', (req, res) => { 
-    const isAdmin = req.query.key === ADMIN_KEY;
-    res.render('books', { books: booksList, isAdmin, adminKey: ADMIN_KEY }); 
+    res.render('books', { books: booksList }); 
 });
+
 app.post('/books', checkAdmin, (req, res) => {
     const title = req.body.title || 'كتاب بدون عنوان';
     const url = req.body.url;
@@ -54,32 +42,10 @@ app.post('/books', checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-app.get('/fatwa', (req, res) => { 
-    const isAdmin = req.query.key === ADMIN_KEY;
-    res.render('fatwa', { fatwas: fatwaList, isAdmin, adminKey: ADMIN_KEY }); 
-});
-app.post('/fatwa', checkAdmin, (req, res) => {
-    const title = req.body.title || 'سؤال فتوى';
-    const answer = req.body.answer || 'الإجابة قيد المراجعة';
-    fatwaList.unshift({ title, answer, date: new Date().toLocaleDateString('ar-SA') });
-    res.json({ success: true });
-});
-
-app.get('/articles', (req, res) => { 
-    const isAdmin = req.query.key === ADMIN_KEY;
-    res.render('articles', { articles: articlesList, isAdmin, adminKey: ADMIN_KEY }); 
-});
-app.post('/articles', checkAdmin, (req, res) => {
-    const title = req.body.title || 'مقال جديد';
-    articlesList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
-    res.json({ success: true });
-});
-
 app.get('/:page', (req, res) => {
     const pageName = req.params.page;
-    const isAdmin = req.query.key === ADMIN_KEY;
     res.render(pageName, { 
-        files: [], articles: articlesList, books: booksList, audios: audiosList, fatwas: fatwaList, isAdmin, adminKey: ADMIN_KEY 
+        files: [], articles: articlesList, books: booksList, audios: audiosList, fatwas: fatwaList 
     }, (err, html) => {
         if (err) {
             res.status(200).send(`
