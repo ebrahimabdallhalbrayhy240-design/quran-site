@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 const path = require('path');
 
 const app = express();
@@ -13,6 +14,8 @@ let db = {
     articles: [],
     fatwas: []
 };
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -30,48 +33,41 @@ const checkAdmin = (req, res, next) => {
 };
 
 app.get('/', (req, res) => {
-    try {
-        const latestAudio = db.audios.length > 0 ? db.audios[db.audios.length - 1] : null;
-        res.render('index', { latestAudio });
-    } catch (err) {
-        res.status(500).send('خطأ في العرض: ' + err.message);
-    }
+    const latestAudio = db.audios.length > 0 ? db.audios[db.audios.length - 1] : null;
+    const latestBook = db.books.length > 0 ? db.books[db.books.length - 1] : null;
+    res.render('index', { latestAudio, latestBook });
 });
 
 app.get('/books', (req, res) => {
-    try {
-        res.render('books', { books: db.books });
-    } catch (err) {
-        res.status(500).send('خطأ في العرض: ' + err.message);
-    }
+    res.render('books', { books: db.books });
 });
 
-app.post('/books', checkAdmin, (req, res) => {
+app.post('/books', upload.single('bookFile'), checkAdmin, (req, res) => {
     const { title } = req.body;
-    db.books.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA') });
+    let fileUrl = '#';
+    if (req.file) {
+        fileUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    }
+    db.books.push({ title, url: fileUrl, date: new Date().toLocaleDateString('ar-SA'), fileName: req.file ? req.file.originalname : 'ملف' });
     res.json({ success: true });
 });
 
 app.get('/audio', (req, res) => {
-    try {
-        res.render('audio', { audios: db.audios });
-    } catch (err) {
-        res.status(500).send('خطأ في العرض: ' + err.message);
-    }
+    res.render('audio', { audios: db.audios });
 });
 
-app.post('/audio', checkAdmin, (req, res) => {
+app.post('/audio', upload.single('audioFile'), checkAdmin, (req, res) => {
     const { title } = req.body;
-    db.audios.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA') });
+    let fileUrl = '#';
+    if (req.file) {
+        fileUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    }
+    db.audios.push({ title, url: fileUrl, date: new Date().toLocaleDateString('ar-SA'), fileName: req.file ? req.file.originalname : 'مقطع صوتي' });
     res.json({ success: true });
 });
 
 app.get('/articles', (req, res) => {
-    try {
-        res.render('articles', { articles: db.articles });
-    } catch (err) {
-        res.status(500).send('خطأ في العرض: ' + err.message);
-    }
+    res.render('articles', { articles: db.articles });
 });
 
 app.post('/articles', checkAdmin, (req, res) => {
@@ -81,11 +77,7 @@ app.post('/articles', checkAdmin, (req, res) => {
 });
 
 app.get('/fatwas', (req, res) => {
-    try {
-        res.render('fatwas', { fatwas: db.fatwas });
-    } catch (err) {
-        res.status(500).send('خطأ في العرض: ' + err.message);
-    }
+    res.render('fatwas', { fatwas: db.fatwas });
 });
 
 app.post('/fatwas', checkAdmin, (req, res) => {
