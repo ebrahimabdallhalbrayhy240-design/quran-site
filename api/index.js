@@ -9,6 +9,9 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// مصفوفة مؤقتة لتخزين الصوتيات المرفوعة
+let audiosList = [];
+
 // الصفحة الرئيسية
 app.get('/', (req, res) => {
     res.render('index', { files: [], articles: [], books: [], messages: [] }, (err, html) => {
@@ -20,7 +23,21 @@ app.get('/', (req, res) => {
     });
 });
 
-// مسارات الأقسام الرئيسية مع دعم استقبال البيانات المرفوعة
+// قسم الصوتيات (عرض واستقبال)
+app.get('/audios', (req, res) => {
+    res.render('audios', { audios: audiosList });
+});
+
+app.post('/audios', (req, res) => {
+    // استقبال العنوان (مؤقتاً بدون حفظ الملف الثقيل على سيرفرلس لتجنب الأخطاء، أو حفظ اسم الملف)
+    const title = req.body.title || 'صوتية بدون عنوان';
+    
+    // إضافة الصوتية الجديدة للقائمة
+    audiosList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
+    
+    res.json({ success: true });
+});
+
 app.get('/articles', (req, res) => {
     res.render('articles', { success: false });
 });
@@ -42,14 +59,7 @@ app.post('/fatwa', (req, res) => {
     res.render('fatwa', { success: true });
 });
 
-app.get('/audios', (req, res) => {
-    res.render('audios', { success: false });
-});
-app.post('/audios', (req, res) => {
-    res.render('audios', { success: true });
-});
-
-// التعامل مع أي صفحة أخرى لمنع انهيار السيرفر
+// التعامل مع أي صفحة أخرى
 app.get('/:page', (req, res) => {
     const pageName = req.params.page;
     res.render(pageName, { 
