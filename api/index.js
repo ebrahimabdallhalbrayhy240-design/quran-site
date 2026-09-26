@@ -14,10 +14,9 @@ let booksList = [];
 let fatwaList = [];
 let articlesList = [];
 
-// كلمة المرور السرية الخاصة بك للرفع
+// كلمة المرور السرية الموحدة للمشرف
 const ADMIN_PASS = '1234';
 
-// التحقق من كلمة المرور عبر الطلب
 function checkAdmin(req, res, next) {
     const password = req.body.password || req.headers['x-admin-pass'];
     if (password === ADMIN_PASS) {
@@ -31,14 +30,38 @@ app.get('/', (req, res) => {
     res.render('index', { files: [], articles: articlesList, books: booksList, messages: [] });
 });
 
-app.get('/books', (req, res) => { 
-    res.render('books', { books: booksList }); 
+// قسم الصوتيات
+app.get('/audios', (req, res) => { res.render('audios', { audios: audiosList }); });
+app.post('/audios', checkAdmin, (req, res) => {
+    const title = req.body.title || 'صوتية بدون عنوان';
+    const url = req.body.url;
+    audiosList.unshift({ title, url, date: new Date().toLocaleDateString('ar-SA') });
+    res.json({ success: true });
 });
 
+// قسم الكتب
+app.get('/books', (req, res) => { res.render('books', { books: booksList }); });
 app.post('/books', checkAdmin, (req, res) => {
     const title = req.body.title || 'كتاب بدون عنوان';
     const url = req.body.url;
     booksList.unshift({ title, url, date: new Date().toLocaleDateString('ar-SA') });
+    res.json({ success: true });
+});
+
+// قسم الفتاوى
+app.get('/fatwa', (req, res) => { res.render('fatwa', { fatwas: fatwaList }); });
+app.post('/fatwa', checkAdmin, (req, res) => {
+    const title = req.body.title || 'سؤال فتوى';
+    const answer = req.body.answer || 'الإجابة قيد المراجعة';
+    fatwaList.unshift({ title, answer, date: new Date().toLocaleDateString('ar-SA') });
+    res.json({ success: true });
+});
+
+// قسم المقالات
+app.get('/articles', (req, res) => { res.render('articles', { articles: articlesList }); });
+app.post('/articles', checkAdmin, (req, res) => {
+    const title = req.body.title || 'مقال جديد';
+    articlesList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 

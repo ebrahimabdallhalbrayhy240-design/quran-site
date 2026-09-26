@@ -6,137 +6,22 @@
     <title>المكتبة الصوتية - موقع القرآن الكريم</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #0f2e1b 0%, #1b4d3e 50%, #2c5e4a 100%);
-            margin: 0;
-            padding: 20px;
-            color: #f9f9f9;
-            min-height: 100vh;
-        }
-        .header-box {
-            background: linear-gradient(135deg, #12372a 0%, #436850 100%);
-            color: #fbfada;
-            padding: 30px 20px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            margin-bottom: 25px;
-            border: 2px solid #adbc9f;
-        }
-        .header-box h1 {
-            font-family: 'Amiri', serif;
-            font-size: 30px;
-            margin: 0;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-        }
-        .back-link {
-            display: inline-block;
-            margin-top: 10px;
-            color: #adbc9f;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .content-box {
-            background: rgba(18, 55, 42, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            border: 1px solid #436850;
-            margin-bottom: 20px;
-        }
-        .content-box h3 {
-            font-family: 'Amiri', serif;
-            color: #fbfada;
-            font-size: 22px;
-            margin-top: 0;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border: 1px solid #436850;
-            background: #0f2e1b;
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
-            box-sizing: border-box;
-        }
-        input:focus {
-            outline: none;
-            border-color: #d4af37;
-        }
-        .action-btn {
-            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
-            color: #ffffff;
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-        }
-        .progress-container {
-            width: 100%;
-            background: #0f2e1b;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-            overflow: hidden;
-            border: 1px solid #436850;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 22px;
-            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
-            text-align: center;
-            color: #fff;
-            font-size: 13px;
-            line-height: 22px;
-            font-weight: bold;
-            transition: width 0.1s ease;
-        }
-        .alert {
-            background: #2e7d32;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 15px;
-            display: none;
-        }
-        .audio-item {
-            background: #1b4d3e;
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-            border: 1px solid #436850;
-        }
-        .audio-title {
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: #fbfada;
-        }
-        audio {
-            width: 100%;
-            margin-top: 5px;
-            height: 40px;
-        }
-        .download-btn {
-            display: inline-block;
-            margin-top: 8px;
-            background: #2c5e4a;
-            color: #fbfada;
-            padding: 6px 12px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 13px;
-            border: 1px solid #adbc9f;
-        }
+        body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #0f2e1b 0%, #1b4d3e 50%, #2c5e4a 100%); margin: 0; padding: 20px; color: #f9f9f9; min-height: 100vh; }
+        .header-box { background: linear-gradient(135deg, #12372a 0%, #436850 100%); color: #fbfada; padding: 30px 20px; border-radius: 20px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); margin-bottom: 25px; border: 2px solid #adbc9f; }
+        .header-box h1 { font-family: 'Amiri', serif; font-size: 30px; margin: 0; }
+        .back-link { display: inline-block; margin-top: 10px; color: #adbc9f; text-decoration: none; font-weight: bold; }
+        .content-box { background: rgba(18, 55, 42, 0.9); backdrop-filter: blur(10px); padding: 25px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); border: 1px solid #436850; margin-bottom: 20px; }
+        .content-box h3 { font-family: 'Amiri', serif; color: #fbfada; font-size: 22px; margin-top: 0; }
+        input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #436850; background: #0f2e1b; color: #fff; box-sizing: border-box; }
+        input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #436850; background: #1b4d3e; color: #fbfada; box-sizing: border-box; cursor: pointer; }
+        .action-btn { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #fff; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .progress-container { width: 100%; background: #0f2e1b; border-radius: 10px; margin-top: 15px; display: none; overflow: hidden; border: 1px solid #436850; }
+        .progress-bar { width: 0%; height: 22px; background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); text-align: center; color: #fff; font-size: 13px; line-height: 22px; font-weight: bold; }
+        .alert { background: #2e7d32; color: white; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
+        .item-card { background: #1b4d3e; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #436850; }
+        audio { width: 100%; margin-top: 10px; }
+        .admin-login-section { text-align: center; margin-top: 30px; padding: 15px; border-top: 1px dashed #436850; }
+        .admin-trigger { background: none; border: none; color: #adbc9f; cursor: pointer; font-size: 13px; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -145,16 +30,15 @@
         <a href="/" class="back-link">← العودة للرئيسية</a>
     </div>
 
-    <div class="content-box">
-        <h3>إضافة صوتية جديدة</h3>
-        <div id="successAlert" class="alert">تمت الإضافة بنجاح وتفعيل التشغيل والتنزيل!</div>
-        
+    <!-- صندوق الرفع المخفي للصوتيات -->
+    <div class="content-box" id="uploadBox" style="display: none;">
+        <h3>إضافة صوتية جديدة (لوحة التحكم)</h3>
+        <div id="successAlert" class="alert">تمت إضافة الصوتية بنجاح!</div>
         <form id="uploadForm">
             <input type="text" id="audioTitle" placeholder="عنوان الصوتية أو المحاضرة..." required>
-            <input type="file" id="audioFile" accept="audio/*" style="padding: 10px; background: #1b4d3e;" required>
+            <input type="file" id="audioFile" accept="audio/*" required>
             <button type="submit" class="action-btn">🎙️ نشر الصوتية</button>
         </form>
-
         <div class="progress-container" id="progressContainer">
             <div class="progress-bar" id="progressBar">0%</div>
         </div>
@@ -162,20 +46,13 @@
 
     <div class="content-box">
         <h3>الصوتيات المنشورة</h3>
-        <div id="audiosListContainer">
+        <div>
             <% if (locals.audios && audios.length > 0) { %>
                 <% audios.forEach(audio => { %>
-                    <div class="audio-item">
-                        <div class="audio-title">🎵 <%= audio.title %></div>
+                    <div class="item-card">
+                        <div style="font-weight: bold; color: #fbfada;">🔊 <%= audio.title %></div>
                         <% if (audio.url) { %>
-                            <audio controls preload="metadata">
-                                <source src="<%= audio.url %>" type="audio/mp4">
-                                <source src="<%= audio.url %>" type="audio/mpeg">
-                                متصفحك لا يدعم مشغل الصوت
-                            </audio>
-                            <div style="text-align: left; margin-top: 5px;">
-                                <a href="<%= audio.url %>" download class="download-btn" target="_blank">📥 تنزيل الملف (من الثلاث نقاط أو هنا)</a>
-                            </div>
+                            <audio controls src="<%= audio.url %>"></audio>
                         <% } %>
                         <div style="font-size: 11px; color: #adbc9f; margin-top: 5px;"><%= audio.date %></div>
                     </div>
@@ -186,7 +63,21 @@
         </div>
     </div>
 
+    <div class="admin-login-section">
+        <button class="admin-trigger" onclick="unlockAdmin()">🔒 تسجيل دخول المشرف للرفع</button>
+    </div>
+
     <script>
+        let adminPassword = '';
+        function unlockAdmin() {
+            const pass = prompt('الرجاء إدخال كلمة مرور المشرف:');
+            if (pass) {
+                adminPassword = pass;
+                document.getElementById('uploadBox').style.display = 'block';
+                alert('تم تفعيل وضع المشرف بنجاح!');
+            }
+        }
+
         const form = document.getElementById('uploadForm');
         const progressBar = document.getElementById('progressBar');
         const progressContainer = document.getElementById('progressContainer');
@@ -196,52 +87,34 @@
             e.preventDefault();
             const title = document.getElementById('audioTitle').value;
             const fileInput = document.getElementById('audioFile').files[0];
-
-            if (!fileInput) {
-                alert('الرجاء اختيار ملف صوتي أولاً');
-                return;
-            }
+            if (!fileInput) return;
 
             progressContainer.style.display = 'block';
             let progress = 0;
             const interval = setInterval(() => {
                 progress += 15;
-                if (progress <= 90) {
-                    progressBar.style.width = progress + '%';
-                    progressBar.textContent = progress + '%';
-                }
+                if (progress <= 90) { progressBar.style.width = progress + '%'; progressBar.textContent = progress + '%'; }
             }, 100);
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                const audioDataUrl = event.target.result;
-
                 fetch('/audios', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        title: title,
-                        url: audioDataUrl 
-                    })
+                    headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPassword },
+                    body: JSON.stringify({ title: title, url: event.target.result })
                 })
                 .then(res => res.json())
                 .then(data => {
                     clearInterval(interval);
-                    progressBar.style.width = '100%';
-                    progressBar.textContent = '100%';
-
+                    progressBar.style.width = '100%'; progressBar.textContent = '100%';
                     if (data.success) {
                         successAlert.style.display = 'block';
                         form.reset();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        alert(data.message || 'كلمة المرور خاطئة!');
+                        progressContainer.style.display = 'none';
                     }
-                })
-                .catch(err => {
-                    clearInterval(interval);
-                    alert('حدث خطأ، حاول مرة أخرى.');
-                    progressContainer.style.display = 'none';
                 });
             };
             reader.readAsDataURL(fileInput);
