@@ -106,6 +106,39 @@
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
 
+        .progress-container {
+            width: 100%;
+            background: #061c10;
+            border-radius: 12px;
+            border: 1px solid var(--gold-border);
+            margin-top: 15px;
+            overflow: hidden;
+            display: none;
+            position: relative;
+            height: 24px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #aa771c, #ffdf00);
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(255, 223, 0, 0.5);
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            line-height: 24px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
         .alert {
             background: #2e7d32;
             color: white;
@@ -149,14 +182,18 @@
         <a href="/" class="back-link">← العودة للرئيسية</a>
     </div>
 
-    <!-- صندوق إضافة فتوى مخفي للمشرف -->
     <div class="content-box" id="uploadBox" style="display: none;">
         <h3>إضافة فتوى جديدة</h3>
         <div id="successAlert" class="alert">تم نشر الفتوى بنجاح!</div>
         <form id="uploadForm">
             <input type="text" id="fatwaTitle" placeholder="السؤال / عنوان الفتوى..." required>
             <textarea id="fatwaContent" placeholder="الإجابة / نص الفتوى..." required></textarea>
-            <button type="submit" class="action-btn">💡 نشر الفتوى</button>
+            <button type="submit" id="submitBtn" class="action-btn">💡 نشر الفتوى</button>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
         </form>
     </div>
 
@@ -185,37 +222,98 @@
         let adminPassword = '';
         function unlockAdmin() {
             const pass = prompt('الرجاء إدخال كلمة مرور المشرف:');
-            if (pass) {
+            if (pass === 'admin123') {
                 adminPassword = pass;
                 document.getElementById('uploadBox').style.display = 'block';
                 alert('تم تفعيل وضع المشرف بنجاح!');
+            } else {
+                alert('كلمة المرور غير صحيحة!');
             }
         }
 
         const form = document.getElementById('uploadForm');
         const successAlert = document.getElementById('successAlert');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const submitBtn = document.getElementById('submitBtn');
+
+        let isUploading = false;
+
+        window.addEventListener('beforeunload', function (e) {
+            if (isUploading) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const title = document.getElementById('fatwaTitle').value;
             const content = document.getElementById('fatwaContent').value;
 
-            fetch('/fatwas', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPassword },
-                body: JSON.stringify({ title: title, content: content })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    successAlert.style.display = 'block';
-                    form.reset();
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    alert(data.message || 'كلمة المرور خاطئة!');
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/fatwas', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('x-admin-pass', adminPassword);
+
+            progressContainer.style.display = 'block';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            isUploading = true;
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress < 90) {
+                    progress += 15;
+                    progressBar.style.width = progress + '%';
+                    progressText.textContent = 'جاري النشر... ' + progress + '%';
                 }
-            });
+            }, 50);
+
+            xhr.onload = function() {
+                clearInterval(interval);
+                isUploading = false;
+                progressBar.style.width = '100%';
+                progressText.textContent = 'تم النشر بنجاح 100%!';
+
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.success) {
+                            successAlert.style.display = 'block';
+                            form.reset();
+                            setTimeout(() => location.reload(), 1000);
+                        } else {
+                            alert(data.message || 'حدث خطأ!');
+                            resetUploadUI();
+                        }
+                    } catch (err) {
+                        alert('حدث خطأ في الاستجابة');
+                        resetUploadUI();
+                    }
+                } else {
+                    alert('كلمة المرور غير صحيحة أو حدث خطأ في الخادم!');
+                    resetUploadUI();
+                }
+            };
+
+            xhr.onerror = function() {
+                clearInterval(interval);
+                isUploading = false;
+                alert('فشل الاتصال بالخادم');
+                resetUploadUI();
+            };
+
+            xhr.send(JSON.stringify({ title: title, content: content, adminPass: adminPassword }));
         });
+
+        function resetUploadUI() {
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+        }
     </script>
 </body>
 </html>
