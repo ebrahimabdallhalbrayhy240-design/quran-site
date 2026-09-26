@@ -104,5 +104,5 @@ app.post('/upload', upload.single('audioFile'), (req, res) => {
   res.redirect('/audios');
 });
 
-app.listen(3000, () => console.log('الموقع يعمل الان على: http://localhost:3000'));
+module.exports = app;
 
