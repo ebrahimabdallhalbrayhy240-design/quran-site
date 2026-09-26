@@ -16,7 +16,8 @@
         .action-btn { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #fff; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .alert { background: #2e7d32; color: white; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
         .item-card { background: #1b4d3e; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #436850; }
-        .custom-btn { display: inline-block; background: #2c5e4a; color: #fbfada; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 14px; border: 1px solid #adbc9f; font-weight: bold; margin-top: 10px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .custom-btn { display: inline-block; background: #2c5e4a; color: #fbfada; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; border: 1px solid #adbc9f; font-weight: bold; }
         .admin-login-section { text-align: center; margin-top: 30px; padding: 15px; border-top: 1px dashed #436850; }
         .admin-trigger { background: none; border: none; color: #adbc9f; cursor: pointer; font-size: 13px; text-decoration: underline; }
     </style>
@@ -32,8 +33,8 @@
         <h3>إضافة كتاب جديد (برابط تليجرام)</h3>
         <div id="successAlert" class="alert">تمت إضافة الكتاب بنجاح!</div>
         <form id="uploadForm">
-            <input type="text" id="bookTitle" placeholder="عنوان الكتاب (مثلاً: اللآلئ البهية)..." required>
-            <input type="text" id="bookUrl" placeholder="الصق رابط تليجرام هنا..." required>
+            <input type="text" id="bookTitle" placeholder="عنوان الكتاب..." required>
+            <input type="text" id="bookUrl" placeholder="رابط الملف من تليجرام..." required>
             <button type="submit" class="action-btn">📚 نشر الكتاب</button>
         </form>
     </div>
@@ -46,7 +47,10 @@
                     <div class="item-card">
                         <div style="font-weight: bold; color: #fbfada; font-size: 16px;">📖 <%= book.title %></div>
                         <% if (book.url) { %>
-                            <a href="<%= book.url %>" target="_blank" class="custom-btn">📥 تصفح أو تحميل الكتاب</a>
+                            <div class="btn-group">
+                                <a href="<%= book.url %>" target="_blank" class="custom-btn">👁️ تصفح مباشر</a>
+                                <a href="<%= book.url %>" download class="custom-btn">📥 تحميل وتنزيل</a>
+                            </div>
                         <% } %>
                         <div style="font-size: 11px; color: #adbc9f; margin-top: 8px;"><%= book.date %></div>
                     </div>
