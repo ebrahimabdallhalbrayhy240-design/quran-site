@@ -14,12 +14,11 @@ let db = {
     fatwas: []
 };
 
-// توجيه السيرفر إلى مجلد views الصحيح حيث توجد ملفات التصميم الأصلية
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const checkAdmin = (req, res, next) => {
     const pass = req.headers['x-admin-pass'] || req.body.adminPass;
@@ -31,12 +30,20 @@ const checkAdmin = (req, res, next) => {
 };
 
 app.get('/', (req, res) => {
-    const latestAudio = db.audios.length > 0 ? db.audios[db.audios.length - 1] : null;
-    res.render('index', { latestAudio });
+    try {
+        const latestAudio = db.audios.length > 0 ? db.audios[db.audios.length - 1] : null;
+        res.render('index', { latestAudio });
+    } catch (err) {
+        res.status(500).send('خطأ في العرض: ' + err.message);
+    }
 });
 
 app.get('/books', (req, res) => {
-    res.render('books', { books: db.books });
+    try {
+        res.render('books', { books: db.books });
+    } catch (err) {
+        res.status(500).send('خطأ في العرض: ' + err.message);
+    }
 });
 
 app.post('/books', checkAdmin, (req, res) => {
@@ -46,7 +53,11 @@ app.post('/books', checkAdmin, (req, res) => {
 });
 
 app.get('/audio', (req, res) => {
-    res.render('audio', { audios: db.audios });
+    try {
+        res.render('audio', { audios: db.audios });
+    } catch (err) {
+        res.status(500).send('خطأ في العرض: ' + err.message);
+    }
 });
 
 app.post('/audio', checkAdmin, (req, res) => {
@@ -56,7 +67,11 @@ app.post('/audio', checkAdmin, (req, res) => {
 });
 
 app.get('/articles', (req, res) => {
-    res.render('articles', { articles: db.articles });
+    try {
+        res.render('articles', { articles: db.articles });
+    } catch (err) {
+        res.status(500).send('خطأ في العرض: ' + err.message);
+    }
 });
 
 app.post('/articles', checkAdmin, (req, res) => {
@@ -66,7 +81,11 @@ app.post('/articles', checkAdmin, (req, res) => {
 });
 
 app.get('/fatwas', (req, res) => {
-    res.render('fatwas', { fatwas: db.fatwas });
+    try {
+        res.render('fatwas', { fatwas: db.fatwas });
+    } catch (err) {
+        res.status(500).send('خطأ في العرض: ' + err.message);
+    }
 });
 
 app.post('/fatwas', checkAdmin, (req, res) => {
