@@ -48,7 +48,14 @@ app.post('/books', upload.single('bookFile'), checkAdmin, (req, res) => {
     if (req.file) {
         fileUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
     }
-    db.books.push({ title, url: fileUrl, date: new Date().toLocaleDateString('ar-SA'), fileName: req.file ? req.file.originalname : 'ملف' });
+    db.books.push({ 
+        title, 
+        url: fileUrl, 
+        fileUrl: fileUrl, 
+        path: fileUrl, 
+        date: new Date().toLocaleDateString('ar-SA'), 
+        fileName: req.file ? req.file.originalname : 'ملف' 
+    });
     res.json({ success: true });
 });
 
@@ -62,7 +69,15 @@ app.post('/audio', upload.single('audioFile'), checkAdmin, (req, res) => {
     if (req.file) {
         fileUrl = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
     }
-    db.audios.push({ title, url: fileUrl, date: new Date().toLocaleDateString('ar-SA'), fileName: req.file ? req.file.originalname : 'مقطع صوتي' });
+    const audioData = { 
+        title: title || 'مقطع صوتي', 
+        url: fileUrl, 
+        fileUrl: fileUrl, 
+        path: fileUrl, 
+        date: new Date().toLocaleDateString('ar-SA'), 
+        fileName: req.file ? req.file.originalname : 'مقطع صوتي' 
+    };
+    db.audios.push(audioData);
     res.json({ success: true });
 });
 
