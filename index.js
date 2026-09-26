@@ -14,6 +14,8 @@ let db = {
     fatwas: []
 };
 
+// ضبط مسار القوالب ليشمل المجلد الرئيسي تلقائياً ومنع خطأ الـ Render
+app.set('views', __dirname);
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -57,7 +59,7 @@ app.get('/articles', (req, res) => {
     res.render('articles', { articles: db.articles });
 });
 
-app.post('/articles', checkAdmin, (req, res) => {
+app.post('/articles', checkAdmin,, (req, res) => {
     const { title, content } = req.body;
     db.articles.push({ title, content, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
