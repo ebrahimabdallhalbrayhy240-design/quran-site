@@ -16,8 +16,7 @@
         .action-btn { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #fff; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .alert { background: #2e7d32; color: white; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
         .item-card { background: #1b4d3e; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #436850; }
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .custom-btn { display: inline-block; background: #2c5e4a; color: #fbfada; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; border: 1px solid #adbc9f; font-weight: bold; }
+        .custom-btn { display: inline-block; background: #2c5e4a; color: #fbfada; padding: 8px 14px; border-radius: 8px; text-decoration: none; font-size: 13px; border: 1px solid #adbc9f; font-weight: bold; margin-top: 8px; }
         .admin-login-section { text-align: center; margin-top: 30px; padding: 15px; border-top: 1px dashed #436850; }
         .admin-trigger { background: none; border: none; color: #adbc9f; cursor: pointer; font-size: 13px; text-decoration: underline; }
     </style>
@@ -30,11 +29,11 @@
 
     <!-- صندوق إضافة كتاب مخفي -->
     <div class="content-box" id="uploadBox" style="display: none;">
-        <h3>إضافة كتاب جديد (برابط جوجل درايف)</h3>
+        <h3>إضافة كتاب جديد</h3>
         <div id="successAlert" class="alert">تمت إضافة الكتاب بنجاح!</div>
         <form id="uploadForm">
             <input type="text" id="bookTitle" placeholder="عنوان الكتاب..." required>
-            <input type="text" id="bookUrl" placeholder="الصق رابط جوجل درايف هنا..." required>
+            <input type="text" id="bookUrl" placeholder="رابط الملف..." required>
             <button type="submit" class="action-btn">📚 نشر الكتاب</button>
         </form>
     </div>
@@ -43,29 +42,12 @@
         <h3>الكتب والرسائل المنشورة</h3>
         <div>
             <% if (locals.books && books.length > 0) { %>
-                <% books.forEach(book => { 
-                    // استخراج معرف الملف من رابط جوجل درايف وتحويله لرابط عرض نظيف ومباشر
-                    let fileId = '';
-                    let originalUrl = book.url;
-                    if (originalUrl.includes('/d/')) {
-                        let parts = originalUrl.split('/d/');
-                        if (parts.length > 1) {
-                            fileId = parts[1].split('/')[0];
-                        }
-                    } else if (originalUrl.includes('id=')) {
-                        let urlParams = new URLSearchParams(originalUrl.split('?')[1]);
-                        fileId = urlParams.get('id');
-                    }
-                    
-                    let previewUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : originalUrl;
-                    let downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : originalUrl;
-                %>
+                <% books.forEach(book => { %>
                     <div class="item-card">
                         <div style="font-weight: bold; color: #fbfada; font-size: 16px;">📖 <%= book.title %></div>
                         <% if (book.url) { %>
-                            <div class="btn-group">
-                                <a href="<%= previewUrl %>" target="_blank" class="custom-btn">👁️ تصفح مباشر في المتصفح</a>
-                                <a href="<%= downloadUrl %>" target="_blank" class="custom-btn">📥 تحميل الملف</a>
+                            <div>
+                                <a href="<%= book.url %>" target="_blank" class="custom-btn">🔗 تصفح الملف</a>
                             </div>
                         <% } %>
                         <div style="font-size: 11px; color: #adbc9f; margin-top: 8px;"><%= book.date %></div>
