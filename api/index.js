@@ -14,35 +14,62 @@ let booksList = [];
 let fatwaList = [];
 let articlesList = [];
 
+// المفتاح السري الخاص بك (يمكنك تغليقه بالرمز الذي تريده)
+const ADMIN_KEY = 'ibrahim123';
+
+// دالة وسيطة للتحقق من أن المستخدم هو المشرف
+function checkAdmin(req, res, next) {
+    const key = req.query.key || req.body.key;
+    if (key === ADMIN_KEY) {
+        next();
+    } else {
+        res.status(403).json({ success: false, message: 'غير مصرح لك بالرفع أو التعديل' });
+    }
+}
+
 app.get('/', (req, res) => {
-    res.render('index', { files: [], articles: articlesList, books: booksList, messages: [] });
+    const isAdmin = req.query.key === ADMIN_KEY;
+    res.render('index', { files: [], articles: articlesList, books: booksList, messages: [], isAdmin });
 });
 
-app.get('/audios', (req, res) => { res.render('audios', { audios: audiosList }); });
-app.post('/audios', (req, res) => {
+app.get('/audios', (req, res) => { 
+    const isAdmin = req.query.key === ADMIN_KEY;
+    res.render('audios', { audios: audiosList, isAdmin, adminKey: ADMIN_KEY }); 
+});
+app.post('/audios', checkAdmin, (req, res) => {
     const title = req.body.title || 'صوتية بدون عنوان';
-    const url = req.body.url || 'https://www.islamcan.com/audio/quran/surah001.mp3'; // رابط افتراضي يعمل مباشرة
+    const url = req.body.url;
     audiosList.unshift({ title, url, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
-app.get('/books', (req, res) => { res.render('books', { books: booksList }); });
-app.post('/books', (req, res) => {
+app.get('/books', (req, res) => { 
+    const isAdmin = req.query.key === ADMIN_KEY;
+    res.render('books', { books: booksList, isAdmin, adminKey: ADMIN_KEY }); 
+});
+app.post('/books', checkAdmin, (req, res) => {
     const title = req.body.title || 'كتاب بدون عنوان';
-    booksList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
+    const url = req.body.url;
+    booksList.unshift({ title, url, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
-app.get('/fatwa', (req, res) => { res.render('fatwa', { fatwas: fatwaList }); });
-app.post('/fatwa', (req, res) => {
+app.get('/fatwa', (req, res) => { 
+    const isAdmin = req.query.key === ADMIN_KEY;
+    res.render('fatwa', { fatwas: fatwaList, isAdmin, adminKey: ADMIN_KEY }); 
+});
+app.post('/fatwa', checkAdmin, (req, res) => {
     const title = req.body.title || 'سؤال فتوى';
     const answer = req.body.answer || 'الإجابة قيد المراجعة';
     fatwaList.unshift({ title, answer, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
-app.get('/articles', (req, res) => { res.render('articles', { articles: articlesList }); });
-app.post('/articles', (req, res) => {
+app.get('/articles', (req, res) => { 
+    const isAdmin = req.query.key === ADMIN_KEY;
+    res.render('articles', { articles: articlesList, isAdmin, adminKey: ADMIN_KEY }); 
+});
+app.post('/articles', checkAdmin, (req, res) => {
     const title = req.body.title || 'مقال جديد';
     articlesList.unshift({ title, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
@@ -50,8 +77,9 @@ app.post('/articles', (req, res) => {
 
 app.get('/:page', (req, res) => {
     const pageName = req.params.page;
+    const isAdmin = req.query.key === ADMIN_KEY;
     res.render(pageName, { 
-        files: [], articles: articlesList, books: booksList, audios: audiosList, fatwas: fatwaList 
+        files: [], articles: articlesList, books: booksList, audios: audiosList, fatwas: fatwaList, isAdmin, adminKey: ADMIN_KEY 
     }, (err, html) => {
         if (err) {
             res.status(200).send(`
