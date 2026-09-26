@@ -74,7 +74,7 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="file"] {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -169,7 +169,8 @@
         <div id="successAlert" class="alert">تمت إضافة المقطع بنجاح!</div>
         <form id="uploadForm">
             <input type="text" id="audioTitle" placeholder="عنوان المقطع (مثلاً: سورة الفاتحة)..." required>
-            <input type="text" id="audioUrl" placeholder="رابط الملف الصوتي المباشر..." required>
+            <label style="font-size: 13px; color: var(--gold);">اختر الملف الصوتي من الجهاز:</label>
+            <input type="file" id="audioFile" accept="audio/*" required>
             <button type="submit" class="action-btn">🎧 نشر المقطع الصوتي</button>
         </form>
     </div>
@@ -207,10 +208,12 @@
         let adminPassword = '';
         function unlockAdmin() {
             const pass = prompt('الرجاء إدخال كلمة مرور المشرف:');
-            if (pass) {
+            if (pass === 'admin123') {
                 adminPassword = pass;
                 document.getElementById('uploadBox').style.display = 'block';
                 alert('تم تفعيل وضع المشرف بنجاح!');
+            } else {
+                alert('كلمة المرور غير صحيحة!');
             }
         }
 
@@ -220,12 +223,17 @@
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const title = document.getElementById('audioTitle').value;
-            const url = document.getElementById('audioUrl').value;
+            const fileInput = document.getElementById('audioFile').files[0];
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('audioFile', fileInput);
+            formData.append('adminPass', adminPassword);
 
             fetch('/audio', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPassword },
-                body: JSON.stringify({ title: title, url: url })
+                headers: { 'x-admin-pass': adminPassword },
+                body: formData
             })
             .then(res => res.json())
             .then(data => {
@@ -236,6 +244,9 @@
                 } else {
                     alert(data.message || 'كلمة المرور خاطئة!');
                 }
+            })
+            .catch(err => {
+                alert('حدث خطأ أثناء الرفع');
             });
         });
     </script>
