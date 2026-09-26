@@ -126,6 +126,17 @@
             margin-top: 5px;
             height: 40px;
         }
+        .download-btn {
+            display: inline-block;
+            margin-top: 8px;
+            background: #2c5e4a;
+            color: #fbfada;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            border: 1px solid #adbc9f;
+        }
     </style>
 </head>
 <body>
@@ -135,13 +146,13 @@
     </div>
 
     <div class="content-box">
-        <h3>إضافة صوتية جديدة مع شريط التقدم</h3>
-        <div id="successAlert" class="alert">تم رفع الصوتية بنجاح!</div>
+        <h3>إضافة صوتية جديدة</h3>
+        <div id="successAlert" class="alert">تمت الإضافة بنجاح وتفعيل التشغيل والتنزيل!</div>
         
         <form id="uploadForm">
             <input type="text" id="audioTitle" placeholder="عنوان الصوتية أو المحاضرة..." required>
             <input type="file" id="audioFile" accept="audio/*" style="padding: 10px; background: #1b4d3e;" required>
-            <button type="submit" class="action-btn">🎙️ بدء الرفع والنشر</button>
+            <button type="submit" class="action-btn">🎙️ نشر الصوتية</button>
         </form>
 
         <div class="progress-container" id="progressContainer">
@@ -157,12 +168,16 @@
                     <div class="audio-item">
                         <div class="audio-title">🎵 <%= audio.title %></div>
                         <% if (audio.url) { %>
-                            <audio controls>
+                            <audio controls preload="metadata">
+                                <source src="<%= audio.url %>" type="audio/mp4">
                                 <source src="<%= audio.url %>" type="audio/mpeg">
                                 متصفحك لا يدعم مشغل الصوت
                             </audio>
+                            <div style="text-align: left; margin-top: 5px;">
+                                <a href="<%= audio.url %>" download class="download-btn" target="_blank">📥 تنزيل الملف (من الثلاث نقاط أو هنا)</a>
+                            </div>
                         <% } %>
-                        <div style="font-size: 11px; color: #adbc9f; margin-top: 5px; text-align: left;"><%= audio.date %></div>
+                        <div style="font-size: 11px; color: #adbc9f; margin-top: 5px;"><%= audio.date %></div>
                     </div>
                 <% }) %>
             <% } else { %>
@@ -188,20 +203,15 @@
             }
 
             progressContainer.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressBar.textContent = '0%';
-
-            // محاكاة شريط التقدم السريع والدقيق للرفع (من 0 إلى 100 بالمئة)
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 10;
+                progress += 15;
                 if (progress <= 90) {
                     progressBar.style.width = progress + '%';
                     progressBar.textContent = progress + '%';
                 }
-            }, 150);
+            }, 100);
 
-            // قراءة الملف كـ Data URL لكي يعمل مشغل الصوت مباشرة للزوار
             const reader = new FileReader();
             reader.onload = function(event) {
                 const audioDataUrl = event.target.result;
@@ -210,7 +220,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        title: title + ' (' + fileInput.name + ')',
+                        title: title,
                         url: audioDataUrl 
                     })
                 })
@@ -225,12 +235,12 @@
                         form.reset();
                         setTimeout(() => {
                             location.reload();
-                        }, 1200);
+                        }, 1000);
                     }
                 })
                 .catch(err => {
                     clearInterval(interval);
-                    alert('حدث خطأ أثناء الرفع، حاول مرة أخرى.');
+                    alert('حدث خطأ، حاول مرة أخرى.');
                     progressContainer.style.display = 'none';
                 });
             };
