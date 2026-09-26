@@ -90,13 +90,21 @@
         }
         .audio-item {
             background: #1b4d3e;
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
             border: 1px solid #436850;
+        }
+        .audio-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #fbfada;
+        }
+        audio {
+            width: 100%;
+            margin-top: 5px;
+            height: 40px;
         }
     </style>
 </head>
@@ -123,8 +131,14 @@
             <% if (locals.audios && audios.length > 0) { %>
                 <% audios.forEach(audio => { %>
                     <div class="audio-item">
-                        <span>🎵 <%= audio.title %></span>
-                        <span style="font-size: 12px; color: #adbc9f;"><%= audio.date %></span>
+                        <div class="audio-title">🎵 <%= audio.title %></div>
+                        <% if (audio.url) { %>
+                            <audio controls>
+                                <source src="<%= audio.url %>" type="audio/mpeg">
+                                متصفحك لا يدعم مشغل الصوت
+                            </audio>
+                        <% } %>
+                        <div style="font-size: 11px; color: #adbc9f; margin-top: 5px; text-align: left;"><%= audio.date %></div>
                     </div>
                 <% }) %>
             <% } else { %>
@@ -147,25 +161,34 @@
                 return;
             }
 
-            // إرسال البيانات بشكل آمن وسريع عبر JSON لتجنب مشاكل الاستضافة
-            fetch('/audios', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title + ' (' + fileInput.name + ')' })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    successAlert.style.display = 'block';
-                    form.reset();
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-                }
-            })
-            .catch(err => {
-                alert('حدث خطأ، حاول مرة أخرى.');
-            });
+            // قراءة الملف وتحويله إلى رابط مؤقت داخل المتصفح ليعمل المشغل فوراً
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const audioDataUrl = event.target.result;
+
+                fetch('/audios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        title: title,
+                        url: audioDataUrl 
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        successAlert.style.display = 'block';
+                        form.reset();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    }
+                })
+                .catch(err => {
+                    alert('حدث خطأ، حاول مرة أخرى.');
+                });
+            };
+            reader.readAsDataURL(fileInput);
         });
     </script>
 </body>
