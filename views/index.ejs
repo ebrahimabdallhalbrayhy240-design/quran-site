@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موقع القرآن الكريم والعلوم الشرعية</title>
+    <title>موقع القرآن الكريم والمحاضرات</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-bg: linear-gradient(135deg, #091c12 0%, #113f27 50%, #1e5f3f 100%);
-            --card-bg: rgba(17, 63, 39, 0.75);
-            --card-border: rgba(212, 175, 55, 0.4);
-            --gold: #d4af37;
-            --gold-light: #fbfada;
-            --text-main: #f9f9f9;
-            --text-muted: #adbc9f;
+            --bg-gradient: linear-gradient(135deg, #071810 0%, #0f3822 50%, #164e31 100%);
+            --box-bg: rgba(15, 56, 34, 0.85);
+            --gold: #f3e5ab;
+            --gold-bright: #ffd700;
+            --border-gold: rgba(243, 229, 171, 0.45);
+            --text-light: #ffffff;
+            --text-muted: #c2d0c5;
         }
 
         body {
             font-family: 'Cairo', sans-serif;
-            background: var(--primary-bg);
+            background: var(--bg-gradient);
             margin: 0;
-            padding: 20px;
-            color: var(--text-main);
+            padding: 15px;
+            color: var(--text-light);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -29,118 +29,123 @@
         }
 
         .main-header {
-            background: linear-gradient(135deg, #113f27 0%, #20603f 100%);
-            color: var(--gold-light);
-            padding: 40px 20px;
-            border-radius: 24px;
+            background: linear-gradient(135deg, #0f3822 0%, #1b5e3a 100%);
+            color: var(--gold);
+            padding: 30px 15px;
+            border-radius: 22px;
             text-align: center;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(212, 175, 55, 0.2);
-            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(243, 229, 171, 0.15);
+            margin-bottom: 20px;
             border: 2px solid var(--gold);
             width: 100%;
-            max-width: 600px;
+            max-width: 550px;
             box-sizing: border-box;
             position: relative;
-            overflow: hidden;
-        }
-
-        .main-header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
-            pointer-events: none;
         }
 
         .main-header h1 {
             font-family: 'Amiri', serif;
-            font-size: 34px;
-            margin: 0 0 10px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            color: var(--gold);
+            font-size: 32px;
+            margin: 0 0 8px 0;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            color: var(--gold-bright);
         }
 
         .main-header p {
             color: var(--text-muted);
-            font-size: 15px;
+            font-size: 14px;
             margin: 0;
         }
 
-        .sections-container {
+        .grid-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 550px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .nav-card {
+            background: var(--box-bg);
+            backdrop-filter: blur(10px);
+            padding: 18px 12px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-gold);
+            text-decoration: none;
+            color: var(--text-light);
             display: flex;
             flex-direction: column;
-            gap: 15px;
-        }
-
-        .section-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            padding: 20px 25px;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--card-border);
-            text-decoration: none;
-            color: var(--text-main);
-            display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
+            text-align: center;
             transition: all 0.3s ease;
-            position: relative;
         }
 
-        .section-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--gold);
-            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.25);
-            background: rgba(20, 74, 46, 0.85);
+        .nav-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold-bright);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            background: rgba(22, 78, 49, 0.95);
         }
 
-        .section-info {
+        .nav-icon {
+            font-size: 26px;
+            margin-bottom: 8px;
+            background: rgba(243, 229, 171, 0.12);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(243, 229, 171, 0.25);
+        }
+
+        .nav-title {
+            font-family: 'Amiri', serif;
+            font-size: 20px;
+            color: var(--gold);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .full-width-box {
+            width: 100%;
+            max-width: 550px;
+            background: var(--box-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-gold);
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .full-width-box h3 {
+            font-family: 'Amiri', serif;
+            color: var(--gold);
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .sub-card {
+            background: #113f27;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-gold);
+            color: var(--text-light);
+            font-family: 'Amiri', serif;
+            font-size: 18px;
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-
-        .section-icon {
-            font-size: 28px;
-            background: rgba(212, 175, 55, 0.15);
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-
-        .section-title {
-            font-family: 'Amiri', serif;
-            font-size: 22px;
-            color: var(--gold-light);
-            margin: 0;
-        }
-
-        .section-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin: 4px 0 0 0;
-        }
-
-        .arrow {
-            color: var(--gold);
-            font-size: 20px;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-        }
-
-        .section-card:hover .arrow {
-            transform: translateX(-5px);
+            justify-content: center;
+            gap: 8px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
         }
 
         .footer-note {
-            margin-top: 30px;
-            font-size: 12px;
+            margin-top: 25px;
+            font-size: 11px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -149,34 +154,42 @@
 <body>
 
     <div class="main-header">
-        <h1>موقع القرآن الكريم</h1>
-        <p>منصة مباركة لخدمة العلوم الشرعية والكتب والرسائل</p>
+        <h1>موقع القرآن الكريم والمحاضرات</h1>
+        <p>منصة مباركة لخدمة العلوم الشرعية</p>
     </div>
 
-    <div class="sections-container">
-        <!-- قسم الكتب والرسائل -->
-        <a href="/books" class="section-card">
-            <div class="section-info">
-                <div class="section-icon">📚</div>
-                <div>
-                    <h2 class="section-title">الكتب والرسائل</h2>
-                    <p class="section-desc">تصفح وقراءة وتحميل المؤلفات والمراجع الشرعية</p>
-                </div>
-            </div>
-            <div class="arrow">←</div>
+    <div class="grid-container">
+        <!-- المقالات -->
+        <a href="#" class="nav-card">
+            <div class="nav-icon">📝</div>
+            <h2 class="nav-title">المقالات</h2>
         </a>
 
-        <!-- قسم الصوتيات (يمكن إضافته أو ربطه لاحقاً) -->
-        <a href="#" class="section-card" onclick="alert('قريباً سيتم افتتاح القسم الصوتي بإذن الله!'); return false;">
-            <div class="section-info">
-                <div class="section-icon">🎧</div>
-                <div>
-                    <h2 class="section-title">المكتبة الصوتية</h2>
-                    <p class="section-desc">استماع مباشر للدروس والمحاضرات الصوتية</p>
-                </div>
-            </div>
-            <div class="arrow">←</div>
+        <!-- الصوتيات -->
+        <a href="#" class="nav-card">
+            <div class="nav-icon">🎧</div>
+            <h2 class="nav-title">الصوتيات</h2>
         </a>
+
+        <!-- الفتاوى -->
+        <a href="#" class="nav-card">
+            <div class="nav-icon">💡</div>
+            <h2 class="nav-title">الفتاوى</h2>
+        </a>
+
+        <!-- الكتب والرسائل -->
+        <a href="/books" class="nav-card">
+            <div class="nav-icon">📚</div>
+            <h2 class="nav-title">الكتب والرسائل</h2>
+        </a>
+    </div>
+
+    <div class="full-width-box">
+        <h3>آخر الصوتيات والمحاضرات</h3>
+        <div class="sub-card">
+            <span>🔊</span>
+            <span>سورة الفاتحة</span>
+        </div>
     </div>
 
     <div class="footer-note">
