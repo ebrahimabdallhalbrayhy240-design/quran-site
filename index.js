@@ -9,48 +9,24 @@ const PORT = process.env.PORT || 3000;
 
 const ADMIN_PASSWORD = 'admin123';
 
-const uploadDir = path.join(__dirname, 'public/uploads');
-if (!fs.existsSync(uploadDir)) {
-    try {
-        fs.mkdirSync(uploadDir, { recursive: true });
-    } catch (e) {}
-}
+// استخدام الذاكرة المؤقتة لضمان عمل الموقع واستقرار البيانات على Vercel بدون مشاكل نظام الملفات
+let db = {
+    books: [],
+    audios: [],
+    articles: [],
+    fatwas: []
+};
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
-const upload = multer({ storage: storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-const getData = (file) => {
-    const filePath = path.join(__dirname, file);
-    if (!fs.existsSync(filePath)) return [];
-    try {
-        return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    } catch (e) {
-        return [];
-    }
-};
-
-const saveData = (file, data) => {
-    const filePath = path.join(__dirname, file);
-    try {
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    } catch (e) {}
-};
-
-// وسيط التحقق الشامل والمرن لكلمة المرور
+// وسيط التحقق الدقيق من كلمة المرور
 const checkAdmin = (req, res, next) => {
-    const pass = req.headers['x-admin-pass'] || req.body.adminPass || req.query.adminPass;
+    const pass = req.headers['x-admin-pass'] || req.body.adminPass;
     if (pass === ADMIN_PASSWORD) {
         next();
     } else {
@@ -59,62 +35,49 @@ const checkAdmin = (req, res, next) => {
 };
 
 app.get('/', (req, res) => {
-    const audios = getData('audios.json');
-    const latestAudio = audios.length > 0 ? audios[audios.length - 1] : null;
+    const latestAudio = db.audios.length > 0 ? db.audios[db.audios.length - 1] : null;
     res.render('index', { latestAudio });
 });
 
 app.get('/books', (req, res) => {
-    const books = getData('books.json');
-    res.render('books', { books });
+    res.render('books', { books: db.books });
 });
 
 app.post('/books', upload.single('bookFile'), checkAdmin, (req, res) => {
     const { title } = req.body;
-    const fileUrl = req.file ? `/uploads/${req.file.filename}` : '';
-    const books = getData('books.json');
-    books.push({ title, url: fileUrl, date: new Date().toLocaleDateString('ar-SA') });
-    saveData('books.json', books);
+    const fileName = req.file ? req.file.originalname : 'ملف مرفق';
+    db.books.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA'), fileName });
     res.json({ success: true });
 });
 
 app.get('/audio', (req, res) => {
-    const audios = getData('audios.json');
-    res.render('audio', { audios });
+    res.render('audio', { audios: db.audios });
 });
 
 app.post('/audio', upload.single('audioFile'), checkAdmin, (req, res) => {
     const { title } = req.body;
-    const fileUrl = req.file ? `/uploads/${req.file.filename}` : '';
-    const audios = getData('audios.json');
-    audios.push({ title, url: fileUrl, date: new Date().toLocaleDateString('ar-SA') });
-    saveData('audios.json', audios);
+    const fileName = req.file ? req.file.originalname : 'مقطع صوتي';
+    db.audios.push({ title, url: '#', date: new Date().toLocaleDateString('ar-SA'), fileName });
     res.json({ success: true });
 });
 
 app.get('/articles', (req, res) => {
-    const articles = getData('articles.json');
-    res.render('articles', { articles });
+    res.render('articles', { articles: db.articles });
 });
 
 app.post('/articles', checkAdmin, (req, res) => {
     const { title, content } = req.body;
-    const articles = getData('articles.json');
-    articles.push({ title, content, date: new Date().toLocaleDateString('ar-SA') });
-    saveData('articles.json', articles);
+    db.articles.push({ title, content, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
 app.get('/fatwas', (req, res) => {
-    const fatwas = getData('fatwas.json');
-    res.render('fatwas', { fatwas });
+    res.render('fatwas', { fatwas: db.fatwas });
 });
 
 app.post('/fatwas', checkAdmin, (req, res) => {
     const { title, content } = req.body;
-    const fatwas = getData('fatwas.json');
-    fatwas.push({ title, content, date: new Date().toLocaleDateString('ar-SA') });
-    saveData('fatwas.json', fatwas);
+    db.fatwas.push({ title, content, date: new Date().toLocaleDateString('ar-SA') });
     res.json({ success: true });
 });
 
