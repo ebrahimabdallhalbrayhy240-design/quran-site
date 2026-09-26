@@ -101,6 +101,40 @@
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
 
+        /* تصميم شريط التقدم الساحر */
+        .progress-container {
+            width: 100%;
+            background: #061c10;
+            border-radius: 12px;
+            border: 1px solid var(--gold-border);
+            margin-top: 15px;
+            overflow: hidden;
+            display: none;
+            position: relative;
+            height: 24px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #aa771c, #ffdf00);
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(255, 223, 0, 0.5);
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            line-height: 24px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
         .alert {
             background: #2e7d32;
             color: white;
@@ -171,7 +205,13 @@
             <input type="text" id="audioTitle" placeholder="عنوان المقطع (مثلاً: سورة الفاتحة)..." required>
             <label style="font-size: 13px; color: var(--gold);">اختر الملف الصوتي من الجهاز:</label>
             <input type="file" id="audioFile" accept="audio/*" required>
-            <button type="submit" class="action-btn">🎧 نشر المقطع الصوتي</button>
+            <button type="submit" id="submitBtn" class="action-btn">🎧 نشر المقطع الصوتي</button>
+            
+            <!-- شريط التقدم -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+                <div class="progress-text" id="progressText">0%</div>
+            </div>
         </form>
     </div>
 
@@ -219,36 +259,91 @@
 
         const form = document.getElementById('uploadForm');
         const successAlert = document.getElementById('successAlert');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const submitBtn = document.getElementById('submitBtn');
+
+        let isUploading = false;
+
+        // تنبيه ذكي لمنع إغلاق الصفحة أثناء الرفع
+        window.addEventListener('beforeunload', function (e) {
+            if (isUploading) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const title = document.getElementById('audioTitle').value;
             const fileInput = document.getElementById('audioFile').files[0];
 
+            if (!fileInput) return;
+
             const formData = new FormData();
             formData.append('title', title);
             formData.append('audioFile', fileInput);
             formData.append('adminPass', adminPassword);
 
-            fetch('/audio', {
-                method: 'POST',
-                headers: { 'x-admin-pass': adminPassword },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    successAlert.style.display = 'block';
-                    form.reset();
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    alert(data.message || 'كلمة المرور خاطئة!');
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/audio', true);
+            xhr.setRequestHeader('x-admin-pass', adminPassword);
+
+            progressContainer.style.display = 'block';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            isUploading = true;
+
+            // تتبع نسبة الرفع من 0 إلى 100%
+            xhr.upload.addEventListener('progress', function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    progressBar.style.width = percentComplete + '%';
+                    progressText.textContent = 'جاري الرفع... ' + percentComplete + '%';
                 }
-            })
-            .catch(err => {
-                alert('حدث خطأ أثناء الرفع');
             });
+
+            xhr.onload = function() {
+                isUploading = false;
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.success) {
+                            successAlert.style.display = 'block';
+                            progressText.textContent = 'تم الرفع بنجاح 100%!';
+                            form.reset();
+                            setTimeout(() => location.reload(), 1200);
+                        } else {
+                            alert(data.message || 'حدث خطأ!');
+                            resetUploadUI();
+                        }
+                    } catch (err) {
+                        alert('حدث خطأ في الاستجابة');
+                        resetUploadUI();
+                    }
+                } else {
+                    isUploading = false;
+                    alert('كلمة المرور غير صحيحة أو حدث خطأ في الخادم!');
+                    resetUploadUI();
+                }
+            };
+
+            xhr.onerror = function() {
+                isUploading = false;
+                alert('فشل الاتصال بالخادم');
+                resetUploadUI();
+            };
+
+            xhr.send(formData);
         });
+
+        function resetUploadUI() {
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+        }
     </script>
 </body>
 </html>
