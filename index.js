@@ -7,10 +7,8 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// كلمة مرور المشرف السرية
 const ADMIN_PASSWORD = 'admin123';
 
-// إعداد التخزين للملفات المرفوعة (كتب وصوتيات)
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const uploadDir = 'public/uploads';
@@ -30,7 +28,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// قواعد البيانات المحلية البسيطة (ملفات JSON)
 const getData = (file) => {
     if (!fs.existsSync(file)) return [];
     try {
@@ -44,7 +41,6 @@ const saveData = (file, data) => {
     fs.writeFileSync(file, JSON.stringify(data, null, 2));
 };
 
-// ديوان التحقق من كلمة مرور المشرف
 const checkAdmin = (req, res, next) => {
     const pass = req.headers['x-admin-pass'] || req.body.adminPass;
     if (pass === ADMIN_PASSWORD) {
@@ -54,14 +50,12 @@ const checkAdmin = (req, res, next) => {
     }
 };
 
-// الصفحات الرئيسية
 app.get('/', (req, res) => {
     const audios = getData('audios.json');
     const latestAudio = audios.length > 0 ? audios[audios.length - 1] : null;
     res.render('index', { latestAudio });
 });
 
-// قسم الكتب والرسائل
 app.get('/books', (req, res) => {
     const books = getData('books.json');
     res.render('books', { books });
@@ -76,7 +70,6 @@ app.post('/books', upload.single('bookFile'), checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-// قسم الصوتيات (تحديث ليدعم رفع ملف صوتي من الجهاز مباشرة)
 app.get('/audio', (req, res) => {
     const audios = getData('audios.json');
     res.render('audio', { audios });
@@ -91,7 +84,6 @@ app.post('/audio', upload.single('audioFile'), checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-// قسم المقالات
 app.get('/articles', (req, res) => {
     const articles = getData('articles.json');
     res.render('articles', { articles });
@@ -105,7 +97,6 @@ app.post('/articles', checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-// قسم الفتاوى
 app.get('/fatwas', (req, res) => {
     const fatwas = getData('fatwas.json');
     res.render('fatwas', { fatwas });
