@@ -25,24 +25,17 @@
         .content-box h3 { font-family: 'Amiri', serif; color: #fbfada; font-size: 22px; margin-top: 0; }
         input[type="text"] { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #436850; background: #0f2e1b; color: #fff; box-sizing: border-box; }
         
-        /* تصميم زر اختيار الملف ليكون واضحاً وقابلاً للضغط تماماً */
-        .file-upload-wrapper {
-            background: #1b4d3e;
-            border: 2px dashed #adbc9f;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
+        /* إظهار زر اختيار الملف بشكل طبيعي ليعمل فوراً على الهاتف */
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
             margin: 10px 0;
-            cursor: pointer;
-        }
-        .file-upload-wrapper input[type="file"] {
-            display: none; /* إخفاء العنصر الافتراضي وتفعيل التصميم البديل */
-        }
-        .file-label {
+            border-radius: 10px;
+            border: 1px solid #436850;
+            background: #1b4d3e;
             color: #fbfada;
-            font-weight: bold;
+            box-sizing: border-box;
             cursor: pointer;
-            display: block;
         }
 
         .action-btn { background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); color: #fff; width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
@@ -50,7 +43,8 @@
         .progress-bar { width: 0%; height: 22px; background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%); text-align: center; color: #fff; font-size: 13px; line-height: 22px; font-weight: bold; }
         .alert { background: #2e7d32; color: white; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; display: none; }
         .item-card { background: #1b4d3e; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #436850; }
-        .download-btn { display: inline-block; margin-top: 8px; background: #2c5e4a; color: #fbfada; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; border: 1px solid #adbc9f; }
+        .btn-group { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+        .custom-btn { display: inline-block; background: #2c5e4a; color: #fbfada; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; border: 1px solid #adbc9f; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -61,15 +55,12 @@
 
     <div class="content-box">
         <h3>إضافة كتاب أو رسالة جديدة</h3>
-        <div id="successAlert" class="alert">تمت إضافة الكتاب بنجاح!</div>
+        <div id="successAlert" class="alert">تمت إضافة الكتاب بنجاح وتفعيل التصفح والتنزيل!</div>
         <form id="uploadForm">
             <input type="text" id="bookTitle" placeholder="عنوان الكتاب أو الرسالة..." required>
             
-            <!-- زر اختيار ملف محسّن يتجاوز مشاكل المتصفح -->
-            <div class="file-upload-wrapper" onclick="document.getElementById('bookFile').click();">
-                <span class="file-label" id="fileLabelText">📁 اضغط هنا لاختيار ملف الكتاب (PDF أو غيره)</span>
-                <input type="file" id="bookFile" onchange="updateFileName(this)">
-            </div>
+            <!-- زر اختيار ملف قياسي ومضمون يفتح استعراض الملفات فورا -->
+            <input type="file" id="bookFile" required>
 
             <button type="submit" class="action-btn">📚 رفع ونشر الكتاب</button>
         </form>
@@ -84,11 +75,16 @@
             <% if (locals.books && books.length > 0) { %>
                 <% books.forEach(book => { %>
                     <div class="item-card">
-                        <div style="font-weight: bold; color: #fbfada;">📖 <%= book.title %></div>
+                        <div style="font-weight: bold; color: #fbfada; font-size: 16px;">📖 <%= book.title %></div>
                         <% if (book.url) { %>
-                            <a href="<%= book.url %>" download class="download-btn">📥 تحميل الكتاب والرسالة</a>
+                            <div class="btn-group">
+                                <!-- زر لتصفح وقراءة الكتاب مباشرة -->
+                                <a href="<%= book.url %>" target="_blank" class="custom-btn">👁️ تصفح وقراءة</a>
+                                <!-- زر لتنزيل الكتاب -->
+                                <a href="<%= book.url %>" download="<%= book.title %>" class="custom-btn">📥 تحميل وتنزيل</a>
+                            </div>
                         <% } %>
-                        <div style="font-size: 11px; color: #adbc9f; margin-top: 5px;"><%= book.date %></div>
+                        <div style="font-size: 11px; color: #adbc9f; margin-top: 8px;"><%= book.date %></div>
                     </div>
                 <% }) %>
             <% } else { %>
@@ -98,14 +94,6 @@
     </div>
 
     <script>
-        function updateFileName(input) {
-            const label = document.getElementById('fileLabelText');
-            if (input.files && input.files[0]) {
-                label.textContent = '📄 تم اختيار: ' + input.files[0].name;
-                label.style.color = '#d4af37';
-            }
-        }
-
         const form = document.getElementById('uploadForm');
         const progressBar = document.getElementById('progressBar');
         const progressContainer = document.getElementById('progressContainer');
