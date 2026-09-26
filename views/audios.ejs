@@ -78,6 +78,14 @@
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
+        .alert {
+            background: #2e7d32;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -88,9 +96,12 @@
 
     <div class="content-box">
         <h3>رفع صوتية جديدة</h3>
-        <form>
-            <input type="text" placeholder="عنوان الصوتية أو المحاضرة...">
-            <input type="file" style="padding: 10px; background: #1b4d3e;">
+        <% if (locals.success && success) { %>
+            <div class="alert">تمت الإضافة بنجاح!</div>
+        <% } %>
+        <form action="/audios" method="POST" enctype="multipart/form-data">
+            <input type="text" name="title" placeholder="عنوان الصوتية أو المحاضرة..." required>
+            <input type="file" name="audioFile" accept="audio/*" style="padding: 10px; background: #1b4d3e;" required>
             <button type="submit" class="action-btn">🎙️ رفع الصوتية</button>
         </form>
     </div>
