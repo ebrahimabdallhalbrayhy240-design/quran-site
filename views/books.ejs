@@ -30,11 +30,11 @@
 
     <!-- صندوق إضافة كتاب مخفي -->
     <div class="content-box" id="uploadBox" style="display: none;">
-        <h3>إضافة كتاب جديد (برابط تليجرام)</h3>
+        <h3>إضافة كتاب جديد (برابط جوجل درايف)</h3>
         <div id="successAlert" class="alert">تمت إضافة الكتاب بنجاح!</div>
         <form id="uploadForm">
             <input type="text" id="bookTitle" placeholder="عنوان الكتاب..." required>
-            <input type="text" id="bookUrl" placeholder="رابط الملف من تليجرام..." required>
+            <input type="text" id="bookUrl" placeholder="الصق رابط جوجل درايف هنا..." required>
             <button type="submit" class="action-btn">📚 نشر الكتاب</button>
         </form>
     </div>
@@ -43,13 +43,22 @@
         <h3>الكتب والرسائل المنشورة</h3>
         <div>
             <% if (locals.books && books.length > 0) { %>
-                <% books.forEach(book => { %>
+                <% books.forEach(book => { 
+                    // تحويل رابط جوجل درايف العادي تلقائياً إلى رابط عرض مباشر داخل المتصفح
+                    let directUrl = book.url;
+                    if (directUrl.includes('drive.google.com')) {
+                        directUrl = directUrl.replace(/\/view\?usp=sharing|\/view\?usp=drivesdk|view.*/, 'preview');
+                        if (!directUrl.includes('preview')) {
+                            directUrl = directUrl.replace(/\/file\/d\/(.*?)\/.*/, '/file/d/$1/preview');
+                        }
+                    }
+                %>
                     <div class="item-card">
                         <div style="font-weight: bold; color: #fbfada; font-size: 16px;">📖 <%= book.title %></div>
                         <% if (book.url) { %>
                             <div class="btn-group">
-                                <a href="<%= book.url %>" target="_blank" class="custom-btn">👁️ تصفح مباشر</a>
-                                <a href="<%= book.url %>" download class="custom-btn">📥 تحميل وتنزيل</a>
+                                <a href="<%= directUrl %>" target="_blank" class="custom-btn">👁️ تصفح مباشر في المتصفح</a>
+                                <a href="<%= book.url %>" target="_blank" class="custom-btn">📥 تحميل الملف</a>
                             </div>
                         <% } %>
                         <div style="font-size: 11px; color: #adbc9f; margin-top: 8px;"><%= book.date %></div>
