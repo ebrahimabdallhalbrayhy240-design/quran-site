@@ -1,45 +1,221 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>الفتاوى</title>
-  <style>
-    body { font-family: sans-serif; background-color: #f4f6f0; padding: 20px; direction: rtl; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    input, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; box-sizing: border-box; }
-    button { background: #005a43; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-    .fatwa { background: #eef5f2; padding: 10px; margin: 10px 0; border-radius: 5px; }
-    .delete-btn { background: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-top: 5px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قسم الفتاوى - موقع القرآن الكريم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #04120a;
+            --bg-gradient: linear-gradient(145deg, #05190e 0%, #0d301d 50%, #13462a 100%);
+            --box-bg: rgba(13, 48, 29, 0.85);
+            --gold: #f8efba;
+            --gold-bright: #ffdf00;
+            --gold-border: rgba(248, 239, 186, 0.5);
+            --text-light: #ffffff;
+            --text-muted: #b8c5bc;
+            --glow-gold: 0 0 20px rgba(255, 223, 0, 0.25);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-deep);
+            background-image: var(--bg-gradient);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .header-box {
+            background: linear-gradient(135deg, #0d301d 0%, #175232 100%);
+            color: var(--gold);
+            padding: 30px 20px;
+            border-radius: 22px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), var(--glow-gold);
+            margin-bottom: 25px;
+            border: 2px solid var(--gold-border);
+        }
+
+        .header-box h1 {
+            font-family: 'Amiri', serif;
+            font-size: 30px;
+            margin: 0;
+            color: var(--gold-bright);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .content-box {
+            background: var(--box-bg);
+            backdrop-filter: blur(14px);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--gold-border);
+            margin-bottom: 20px;
+        }
+
+        .content-box h3 {
+            font-family: 'Amiri', serif;
+            color: var(--gold);
+            font-size: 22px;
+            margin-top: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid var(--gold-border);
+            background: #061c10;
+            color: #fff;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
+            color: #fff;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 16px;
+            font-family: 'Amiri', serif;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .alert {
+            background: #2e7d32;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .item-card {
+            background: linear-gradient(135deg, #0d301d 0%, #15452b 100%);
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 15px;
+            border: 1px solid var(--gold-border);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .admin-login-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            border-top: 1px dashed var(--gold-border);
+        }
+
+        .admin-trigger {
+            background: none;
+            border: none;
+            color: var(--gold);
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: underline;
+            font-family: 'Cairo', sans-serif;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>قسم الفتاوى</h2>
-    <a href="/">← العودة للرئيسية</a>
-    <hr>
-    <h3>إضافة فتوى جديدة</h3>
-    <form action="/add-fatwa" method="POST">
-      <input type="text" name="question" placeholder="السؤال" required>
-      <textarea name="answer" rows="3" placeholder="الإجابة / نص الفتوى..." required></textarea>
-      <button type="submit">نشر الفتوى</button>
-    </form>
-    <hr>
-    <h3>الفتاوى المتاحة:</h3>
-    <% if(typeof fatwas !== 'undefined' && fatwas.length > 0) { %>
-      <% fatwas.forEach(f => { %>
-        <div class="fatwa">
-          <p><strong>س: <%= f.question %></strong></p>
-          <p>ج: <%= f.answer %></p>
-          <form action="/delete-fatwa" method="POST">
-            <input type="hidden" name="id" value="<%= f.id %>">
-            <button type="submit" class="delete-btn" onclick="return confirm('هل تريد حذف هذه الفتوى؟')">🗑️ حذف الفتوى</button>
-          </form>
+    <div class="header-box">
+        <h1>قسم الفتاوى الشرعية</h1>
+        <a href="/" class="back-link">← العودة للرئيسية</a>
+    </div>
+
+    <!-- صندوق إضافة فتوى مخفي للمشرف -->
+    <div class="content-box" id="uploadBox" style="display: none;">
+        <h3>إضافة فتوى جديدة</h3>
+        <div id="successAlert" class="alert">تم نشر الفتوى بنجاح!</div>
+        <form id="uploadForm">
+            <input type="text" id="fatwaTitle" placeholder="السؤال / عنوان الفتوى..." required>
+            <textarea id="fatwaContent" placeholder="الإجابة / نص الفتوى..." required></textarea>
+            <button type="submit" class="action-btn">💡 نشر الفتوى</button>
+        </form>
+    </div>
+
+    <div class="content-box">
+        <h3>الفتاوى المنشورة</h3>
+        <div>
+            <% if (locals.fatwas && fatwas.length > 0) { %>
+                <% fatwas.forEach(fatwa => { %>
+                    <div class="item-card">
+                        <div style="font-weight: bold; color: var(--gold); font-size: 18px; font-family: 'Amiri', serif;">❓ <%= fatwa.title %></div>
+                        <div style="color: var(--text-light); font-size: 14px; margin-top: 10px; line-height: 1.6; white-space: pre-line;"><%= fatwa.content %></div>
+                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 10px;"><%= fatwa.date %></div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p style="color: var(--text-muted); text-align: center;">لا توجد فتاوى منشورة حالياً.</p>
+            <% } %>
         </div>
-      <% }) %>
-    <% } else { %>
-      <p>لا توجد فتاوى بعد.</p>
-    <% } %>
-  </div>
+    </div>
+
+    <div class="admin-login-section">
+        <button class="admin-trigger" onclick="unlockAdmin()">🔒 تسجيل دخول المشرف للإضافة</button>
+    </div>
+
+    <script>
+        let adminPassword = '';
+        function unlockAdmin() {
+            const pass = prompt('الرجاء إدخال كلمة مرور المشرف:');
+            if (pass) {
+                adminPassword = pass;
+                document.getElementById('uploadBox').style.display = 'block';
+                alert('تم تفعيل وضع المشرف بنجاح!');
+            }
+        }
+
+        const form = document.getElementById('uploadForm');
+        const successAlert = document.getElementById('successAlert');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('fatwaTitle').value;
+            const content = document.getElementById('fatwaContent').value;
+
+            fetch('/fatwas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-admin-pass': adminPassword },
+                body: JSON.stringify({ title: title, content: content })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    successAlert.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    alert(data.message || 'كلمة المرور خاطئة!');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
