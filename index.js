@@ -2,14 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const ADMIN_PASSWORD = 'admin123';
 
-// استخدام الذاكرة المؤقتة لضمان عمل الموقع واستقرار البيانات على Vercel بدون مشاكل نظام الملفات
 let db = {
     books: [],
     audios: [],
@@ -24,7 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// وسيط التحقق الدقيق من كلمة المرور
 const checkAdmin = (req, res, next) => {
     const pass = req.headers['x-admin-pass'] || req.body.adminPass;
     if (pass === ADMIN_PASSWORD) {
@@ -81,6 +78,11 @@ app.post('/fatwas', checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// التشغيل محلياً فقط، والتصدير لـ Vercel
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
