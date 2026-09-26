@@ -1,19 +1,27 @@
 const express = require('express');
-const fs = require('fs');
 const path = require('path');
 const app = express();
 
+// إعداد مسار العروض ومحرك القوالب
+app.set('views', path.join(__dirname, '../views'));
+app.set('view engine', 'ejs');
+
+app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// الصفحة الرئيسية
 app.get('/', (req, res) => {
+    res.render('index', { files: [] });
+});
+
+// صفحات الأقسام (المقالات، الصوتيات، الفتاوى، الكتب)
+app.get('/:page', (req, res) => {
+    const pageName = req.params.page;
     try {
-        const indexPath = path.join(__dirname, '../views/index.ejs');
-        if (fs.existsSync(indexPath)) {
-            let html = fs.readFileSync(indexPath, 'utf8');
-            res.send(html);
-        } else {
-            res.send('<h1>مرحباً بك في موقع القرآن الكريم</h1><p>جاري تحميل الملفات...</p>');
-        }
+        res.render(pageName, { files: [] });
     } catch (err) {
-        res.status(500).send('Error loading page: ' + err.message);
+        res.status(404).send('الصفحة غير موجودة');
     }
 });
 
