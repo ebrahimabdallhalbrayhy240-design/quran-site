@@ -44,21 +44,28 @@
         <div>
             <% if (locals.books && books.length > 0) { %>
                 <% books.forEach(book => { 
-                    // تحويل رابط جوجل درايف العادي تلقائياً إلى رابط عرض مباشر داخل المتصفح
-                    let directUrl = book.url;
-                    if (directUrl.includes('drive.google.com')) {
-                        directUrl = directUrl.replace(/\/view\?usp=sharing|\/view\?usp=drivesdk|view.*/, 'preview');
-                        if (!directUrl.includes('preview')) {
-                            directUrl = directUrl.replace(/\/file\/d\/(.*?)\/.*/, '/file/d/$1/preview');
+                    // استخراج معرف الملف من رابط جوجل درايف وتحويله لرابط عرض نظيف ومباشر
+                    let fileId = '';
+                    let originalUrl = book.url;
+                    if (originalUrl.includes('/d/')) {
+                        let parts = originalUrl.split('/d/');
+                        if (parts.length > 1) {
+                            fileId = parts[1].split('/')[0];
                         }
+                    } else if (originalUrl.includes('id=')) {
+                        let urlParams = new URLSearchParams(originalUrl.split('?')[1]);
+                        fileId = urlParams.get('id');
                     }
+                    
+                    let previewUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : originalUrl;
+                    let downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : originalUrl;
                 %>
                     <div class="item-card">
                         <div style="font-weight: bold; color: #fbfada; font-size: 16px;">📖 <%= book.title %></div>
                         <% if (book.url) { %>
                             <div class="btn-group">
-                                <a href="<%= directUrl %>" target="_blank" class="custom-btn">👁️ تصفح مباشر في المتصفح</a>
-                                <a href="<%= book.url %>" target="_blank" class="custom-btn">📥 تحميل الملف</a>
+                                <a href="<%= previewUrl %>" target="_blank" class="custom-btn">👁️ تصفح مباشر في المتصفح</a>
+                                <a href="<%= downloadUrl %>" target="_blank" class="custom-btn">📥 تحميل الملف</a>
                             </div>
                         <% } %>
                         <div style="font-size: 11px; color: #adbc9f; margin-top: 8px;"><%= book.date %></div>
