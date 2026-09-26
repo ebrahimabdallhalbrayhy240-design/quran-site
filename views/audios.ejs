@@ -79,26 +79,6 @@
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
-        .progress-container {
-            width: 100%;
-            background: #0f2e1b;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-            overflow: hidden;
-            border: 1px solid #436850;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 20px;
-            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
-            text-align: center;
-            color: #fff;
-            font-size: 12px;
-            line-height: 20px;
-            font-weight: bold;
-            transition: width 0.3s;
-        }
         .alert {
             background: #2e7d32;
             color: white;
@@ -127,18 +107,14 @@
     </div>
 
     <div class="content-box">
-        <h3>رفع صوتية جديدة</h3>
-        <div id="successAlert" class="alert">تم رفع الصوتية بنجاح!</div>
+        <h3>إضافة صوتية جديدة</h3>
+        <div id="successAlert" class="alert">تمت إضافة الصوتية بنجاح!</div>
         
         <form id="uploadForm">
             <input type="text" id="audioTitle" placeholder="عنوان الصوتية أو المحاضرة..." required>
             <input type="file" id="audioFile" accept="audio/*" style="padding: 10px; background: #1b4d3e;" required>
-            <button type="submit" class="action-btn">🎙️ رفع الصوتية</button>
+            <button type="submit" class="action-btn">🎙️ نشر الصوتية</button>
         </form>
-
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar" id="progressBar">0%</div>
-        </div>
     </div>
 
     <div class="content-box">
@@ -159,8 +135,6 @@
 
     <script>
         const form = document.getElementById('uploadForm');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
         const successAlert = document.getElementById('successAlert');
 
         form.addEventListener('submit', function(e) {
@@ -173,39 +147,25 @@
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('audioFile', fileInput);
-
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', '/audios', true);
-
-            progressContainer.style.display = 'block';
-
-            xhr.upload.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percentComplete = Math.round((e.loaded / e.total) * 100);
-                    progressBar.style.width = percentComplete + '%';
-                    progressBar.innerHTML = percentComplete + '%';
-                }
-            };
-
-            xhr.onload = function() {
-                if (xhr.status === 200) {
+            // إرسال البيانات بشكل آمن وسريع عبر JSON لتجنب مشاكل الاستضافة
+            fetch('/audios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: title + ' (' + fileInput.name + ')' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
                     successAlert.style.display = 'block';
                     form.reset();
                     setTimeout(() => {
-                        progressContainer.style.display = 'none';
-                        progressBar.style.width = '0%';
-                        location.reload(); // تحديث الصفحة لتظهر الصوتية الجديدة مباشرة في القائمة
+                        location.reload();
                     }, 1500);
-                } else {
-                    alert('حدث خطأ أثناء الرفع، حاول مرة أخرى.');
-                    progressContainer.style.display = 'none';
                 }
-            };
-
-            xhr.send(formData);
+            })
+            .catch(err => {
+                alert('حدث خطأ، حاول مرة أخرى.');
+            });
         });
     </script>
 </body>
