@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +14,8 @@ let db = {
     fatwas: []
 };
 
-app.set('views', __dirname);
+// توجيه السيرفر إلى مجلد views الصحيح حيث توجد ملفات التصميم الأصلية
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -30,31 +30,13 @@ const checkAdmin = (req, res, next) => {
     }
 };
 
-// دالة آمنة تماماً لمنع انهيار الخادم إذا كان ملف الـ EJS غير موجود
-const safeRender = (req, res, viewName, data) => {
-    const viewPath = path.join(__dirname, viewName + '.ejs');
-    if (fs.existsSync(viewPath)) {
-        res.render(viewName, data);
-    } else {
-        res.send(`<!DOCTYPE html>
-        <html lang="ar" dir="rtl">
-        <head><meta charset="UTF-8"><title>منصة إسلامية</title><style>body{font-family:Tahoma;background:#0f172a;color:#fff;text-align:center;padding:50px;}h1{color:#d4af37;}</style></head>
-        <body>
-            <h1>مرحباً بك في منصة إسلامية</h1>
-            <p>السيرفر يعمل بنجاح تام على Vercel الآن!</p>
-            <p style="color: #cbd5e1;">(جارٍ التحقق من ملفات العرض: ${viewName}.ejs)</p>
-        </body>
-        </html>`);
-    }
-};
-
 app.get('/', (req, res) => {
     const latestAudio = db.audios.length > 0 ? db.audios[db.audios.length - 1] : null;
-    safeRender(req, res, 'index', { latestAudio });
+    res.render('index', { latestAudio });
 });
 
 app.get('/books', (req, res) => {
-    safeRender(req, res, 'books', { books: db.books });
+    res.render('books', { books: db.books });
 });
 
 app.post('/books', checkAdmin, (req, res) => {
@@ -64,7 +46,7 @@ app.post('/books', checkAdmin, (req, res) => {
 });
 
 app.get('/audio', (req, res) => {
-    safeRender(req, res, 'audio', { audios: db.audios });
+    res.render('audio', { audios: db.audios });
 });
 
 app.post('/audio', checkAdmin, (req, res) => {
@@ -74,7 +56,7 @@ app.post('/audio', checkAdmin, (req, res) => {
 });
 
 app.get('/articles', (req, res) => {
-    safeRender(req, res, 'articles', { articles: db.articles });
+    res.render('articles', { articles: db.articles });
 });
 
 app.post('/articles', checkAdmin, (req, res) => {
@@ -84,7 +66,7 @@ app.post('/articles', checkAdmin, (req, res) => {
 });
 
 app.get('/fatwas', (req, res) => {
-    safeRender(req, res, 'fatwas', { fatwas: db.fatwas });
+    res.render('fatwas', { fatwas: db.fatwas });
 });
 
 app.post('/fatwas', checkAdmin, (req, res) => {
