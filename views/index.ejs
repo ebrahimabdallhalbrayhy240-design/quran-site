@@ -4,142 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>موقع القرآن الكريم والمحاضرات</title>
-    <!-- خطوط عربية فاخرة ومزخرفة -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,700;1,700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #0f2e1b 0%, #1b4d3e 50%, #2c5e4a 100%);
-            margin: 0;
-            padding: 20px;
-            color: #f9f9f9;
-            min-height: 100vh;
-        }
-        /* اللوحة العلوية الفخمة المزخرفة */
-        .header-box {
-            background: linear-gradient(135deg, #12372a 0%, #436850 100%);
-            color: #fbfada;
-            padding: 35px 20px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            margin-bottom: 30px;
-            border: 2px solid #adbc9f;
-            position: relative;
-            overflow: hidden;
-        }
-        .header-box::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-        .header-box h1 {
-            font-family: 'Amiri', serif;
-            font-size: 34px;
-            margin: 0;
-            letter-spacing: 1.5px;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
-            color: #fbfada;
-        }
-        /* شبكة الأقسام الأنيقة */
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .nav-btn {
-            background: #fbfada;
-            color: #12372a;
-            padding: 22px 15px;
-            text-align: center;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 18px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-            border: 2px solid #adbc9f;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .nav-btn:active {
-            transform: scale(0.95);
-            background: #adbc9f;
-        }
-        /* عنوان القسم الفرعي */
-        .section-title {
-            text-align: center;
-            color: #fbfada;
-            font-size: 24px;
-            margin-bottom: 15px;
-            font-family: 'Amiri', serif;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        /* صندوق المحتوى */
-        .content-box {
-            background: rgba(18, 55, 42, 0.85);
-            backdrop-filter: blur(10px);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            border: 1px solid #436850;
-        }
-        .content-box p {
-            color: #d0e1d4;
-            font-size: 15px;
-        }
-        /* زر الرفع الذهبي الفخم */
-        .action-btn {
-            display: block;
-            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
-            color: #ffffff;
-            text-align: center;
-            padding: 15px;
-            border-radius: 14px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 16px;
-            margin-top: 20px;
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-            border: 1px solid #f3e5ab;
-        }
-        .action-btn:active {
-            transform: scale(0.97);
-        }
+        body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #0f2e1b 0%, #1b4d3e 50%, #2c5e4a 100%); margin: 0; padding: 20px; color: #f9f9f9; min-height: 100vh; text-align: center; }
+        .header-box { background: linear-gradient(135deg, #12372a 0%, #436850 100%); color: #fbfada; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); margin-bottom: 20px; border: 2px solid #adbc9f; }
+        .header-box h1 { font-family: 'Amiri', serif; font-size: 26px; margin: 0; }
+        
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .menu-btn { background: #12372a; border: 1px solid #436850; padding: 18px; border-radius: 14px; color: #fbfada; font-weight: bold; font-size: 16px; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.2s; }
+        .menu-btn:hover { background: #1b4d3e; border-color: #d4af37; }
+
+        .content-box { background: rgba(18, 55, 42, 0.9); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); border: 1px solid #436850; margin-bottom: 20px; text-align: right; }
+        .content-box h3 { font-family: 'Amiri', serif; color: #fbfada; font-size: 20px; margin-top: 0; text-align: center; }
+        .item-card { background: #1b4d3e; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid #436850; text-align: right; }
+        audio { width: 100%; margin-top: 10px; }
+        
+        .admin-login-section { text-align: center; margin-top: 20px; padding: 10px; }
+        .admin-trigger { background: none; border: none; color: #adbc9f; cursor: pointer; font-size: 13px; text-decoration: underline; }
     </style>
 </head>
 <body>
-
-    <!-- اللوحة العلوية المزخرفة بلون ملكي مختلف -->
     <div class="header-box">
         <h1>موقع القرآن الكريم والمحاضرات</h1>
     </div>
 
-    <!-- أزرار الأقسام بتصميم ساحر -->
-    <div class="nav-grid">
-        <a href="/articles" class="nav-btn">المقالات</a>
-        <a href="/audios" class="nav-btn">الصوتيات</a>
-        <a href="/fatwa" class="nav-btn">الفتاوى</a>
-        <a href="/books" class="nav-btn">الكتب والرسائل</a>
+    <!-- أزرار التنقل بين الأقسام -->
+    <div class="grid-menu">
+        <a href="/audios" class="menu-btn">🎧 الصوتيات</a>
+        <a href="/articles" class="menu-btn">📝 المقالات</a>
+        <a href="/books" class="menu-btn">📚 الكتب والرسائل</a>
+        <a href="/fatwa" class="menu-btn">💡 الفتاوى</a>
     </div>
 
-    <div class="section-title">آخر الصوتيات والمحاضرات</div>
-
+    <!-- قسم آخر الصوتيات والمحاضرات -->
     <div class="content-box">
-        <p>لا توجد صوتيات مرفوعة حالياً.</p>
-        <a href="#" class="action-btn">✨ + رفع صوتية جديدة للموقع ✨</a>
+        <h3>آخر الصوتيات والمحاضرات</h3>
+        <div>
+            <% if (locals.audios && audios.length > 0) { %>
+                <% const latestAudio = audios[0]; %>
+                <div class="item-card">
+                    <div style="font-weight: bold; color: #fbfada;">🔊 <%= latestAudio.title %></div>
+                    <% if (latestAudio.url) { %>
+                        <audio controls src="<%= latestAudio.url %>"></audio>
+                    <% } %>
+                    <div style="font-size: 11px; color: #adbc9f; margin-top: 5px;"><%= latestAudio.date %></div>
+                </div>
+            <% } else { %>
+                <p style="color: #d0e1d4; text-align: center; margin: 10px 0;">لا توجد صوتيات مرفوعة حالياً.</p>
+            <% } %>
+        </div>
     </div>
 
+    <div class="admin-login-section">
+        <button class="admin-trigger" onclick="location.href='/audios'">➕ الانتقال لقسم الصوتيات للرفع</button>
+    </div>
 </body>
 </html>

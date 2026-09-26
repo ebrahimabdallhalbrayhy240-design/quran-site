@@ -14,7 +14,6 @@ let booksList = [];
 let fatwaList = [];
 let articlesList = [];
 
-// كلمة المرور السرية الموحدة للمشرف
 const ADMIN_PASS = '1234';
 
 function checkAdmin(req, res, next) {
@@ -26,11 +25,16 @@ function checkAdmin(req, res, next) {
     }
 }
 
+// تمرير الصوتيات للرئيسية لكي تظهر آخر صوتية
 app.get('/', (req, res) => {
-    res.render('index', { files: [], articles: articlesList, books: booksList, messages: [] });
+    res.render('index', { 
+        audios: audiosList, 
+        books: booksList, 
+        articles: articlesList, 
+        fatwas: fatwaList 
+    });
 });
 
-// قسم الصوتيات
 app.get('/audios', (req, res) => { res.render('audios', { audios: audiosList }); });
 app.post('/audios', checkAdmin, (req, res) => {
     const title = req.body.title || 'صوتية بدون عنوان';
@@ -39,7 +43,6 @@ app.post('/audios', checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-// قسم الكتب
 app.get('/books', (req, res) => { res.render('books', { books: booksList }); });
 app.post('/books', checkAdmin, (req, res) => {
     const title = req.body.title || 'كتاب بدون عنوان';
@@ -48,7 +51,6 @@ app.post('/books', checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-// قسم الفتاوى
 app.get('/fatwa', (req, res) => { res.render('fatwa', { fatwas: fatwaList }); });
 app.post('/fatwa', checkAdmin, (req, res) => {
     const title = req.body.title || 'سؤال فتوى';
@@ -57,7 +59,6 @@ app.post('/fatwa', checkAdmin, (req, res) => {
     res.json({ success: true });
 });
 
-// قسم المقالات
 app.get('/articles', (req, res) => { res.render('articles', { articles: articlesList }); });
 app.post('/articles', checkAdmin, (req, res) => {
     const title = req.body.title || 'مقال جديد';
