@@ -44,23 +44,38 @@
             border-radius: 16px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
             border: 1px solid #436850;
-            text-align: center;
+            margin-bottom: 20px;
         }
         .content-box h3 {
             font-family: 'Amiri', serif;
             color: #fbfada;
             font-size: 22px;
+            margin-top: 0;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #436850;
+            background: #0f2e1b;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+        }
+        input:focus {
+            outline: none;
+            border-color: #d4af37;
         }
         .action-btn {
-            display: block;
             background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
             color: #ffffff;
-            text-align: center;
+            width: 100%;
             padding: 14px;
             border-radius: 12px;
-            text-decoration: none;
+            border: none;
             font-weight: bold;
-            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
             box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
         }
     </style>
@@ -72,9 +87,17 @@
     </div>
 
     <div class="content-box">
-        <h3>مكتبة الكتب والرسائل العلمية</h3>
+        <h3>إضافة كتاب أو رسالة جديدة</h3>
+        <form>
+            <input type="text" placeholder="عنوان الكتاب أو الرسالة...">
+            <input type="file" style="padding: 10px; background: #1b4d3e;">
+            <button type="submit" class="action-btn">📚 رفع الكتاب</button>
+        </form>
+    </div>
+
+    <div class="content-box" style="text-align: center;">
+        <h3>الكتب والرسائل المنشورة</h3>
         <p style="color: #d0e1d4;">لا توجد كتب مرفوعة حالياً.</p>
-        <a href="#" class="action-btn">📚 + رفع كتاب أو رسالة جديدة</a>
     </div>
 </body>
 </html>
